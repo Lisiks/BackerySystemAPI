@@ -6,7 +6,7 @@
     <meta name="author" content="lisiks">
     <meta name="description" content="Cайт пекарни '67 Вкусов'">
     <meta name="keywords" content="Пекарня Выпечка Булка Купить Заказать Торты Пироженные Хлебница Хлеб">
-    <title>{{ tittle }}</title>
+    <title>{% block title%}{% endblock %}</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', path='StaticImages/header_image.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/styles.css') }}">
 </head>
@@ -19,18 +19,18 @@
         </div>
 
         <div id="header-menu-section">
-            <a href="#c1">Выпечка</a>
-            <a href="#c2">Десерты</a>
-            <a href="#c3">Торты</a>
-            <a href="#footer-block">Контакты</a>
-            <a href="#">Профиль</a>
-            <a href="#">Избранные товары</a>
-            <a href="#">О компании</a>
-            <a href="#">FAQ</a>
+            {% block menu_links %}
+            {% endblock %}
         </div>
     </header>
     <main>
+        <div>
+            {% block content %}
+            {% endblock %}
+        </div>
+        <aside>
 
+        </aside>
     </main>
 
     <footer id="footer-block">
@@ -40,9 +40,8 @@
         <div id="footer-contacts">
             <div id="footer-contacts-info">
                 <h2>+7(999)-999-99-99</h2>
-                <p>Г.Киров, Ул.Труда 45</p>
-                <p>Г.Киров, Ул.Московская 7</p>
-                <p>Г.Киров, Ул.Ленина 67</p>
+                {% block branch_contacts %}
+                {% endblock %}
                 <div id="footer-contacts-info-messangers">
                     <a href="#" target="_blank" id="vk-a"></a>
                     <a href="#" target="_blank" id="tg-a"></a>

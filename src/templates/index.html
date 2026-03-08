@@ -1,0 +1,31 @@
+{% extends 'base_template.html' %}
+
+{% block title%}
+    Пекарня 67 Вкусов: Каталог
+{% endblock %}
+
+{% block menu_links %}
+    {% for category in categories %}
+        <a target="_self" href="#{{category['id']}}">{{category['category_name']}}</a>
+    {% endfor %}
+    <a href="#footer-block">Контакты</a>
+    <a href="#">Профиль</a>
+    <a href="#">Избранные товары</a>
+    <a href="#">О компании</a>
+    <a href="#">FAQ</a>
+{% endblock %}
+
+{% block content %}
+    {% for category in categories %}
+        <div id="{{ category['id'] }}" class="category-block">
+            <h2>{{ category['category_name'] }}</h2>
+            <div class="product-container"></div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block branch_contacts %}
+    {% for branch in branches %}
+        <p>{{ branch['branches_address'] }}, {{branch['branches_phone']}}</p>
+    {% endfor %}
+{% endblock %}

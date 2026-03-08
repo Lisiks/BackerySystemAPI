@@ -22,6 +22,6 @@ app.include_router(site_data_route)
 
 app.mount(
     "/static",
-    StaticFiles(directory=settings.DIRECTORY_NAME),
+    StaticFiles(directory=settings.DIRECTORY_NAME + "/static"),
     name="static"
 )

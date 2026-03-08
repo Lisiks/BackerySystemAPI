@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     DB_PORT: int
+    DIRECTORY_NAME: str = "BackerySystem"
 
     model_config = SettingsConfigDict(env_file=".env")
 

@@ -33,15 +33,15 @@ class ProductsORM(Base):
     sale_price: Mapped[float] = mapped_column(nullable=False)
     cost_price: Mapped[float] = mapped_column(nullable=False)
 
-    composition: Mapped[str | None] = mapped_column(nullable=True)
+    composition: Mapped[str | None] = mapped_column(nullable=False)
     description: Mapped[str | None] = mapped_column(nullable=True)
 
-    calories: Mapped[int | None] = mapped_column(nullable=True)
-    protein: Mapped[float | None] = mapped_column(nullable=True)
-    fat: Mapped[float | None] = mapped_column(nullable=True)
-    carbs: Mapped[float | None] = mapped_column(nullable=True)
+    calories: Mapped[int | None] = mapped_column(nullable=False)
+    protein: Mapped[float | None] = mapped_column(nullable=False)
+    fat: Mapped[float | None] = mapped_column(nullable=False)
+    carbs: Mapped[float | None] = mapped_column(nullable=False)
 
-    weight: Mapped[int | None] = mapped_column(nullable=True)
+    weight: Mapped[int | None] = mapped_column(nullable=False)
     image_url: Mapped[str | None] = mapped_column(nullable=True)
 
     is_visible: Mapped[bool] = mapped_column(nullable=False, default=True)

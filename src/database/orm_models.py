@@ -1,6 +1,6 @@
 from src.database.database import Base
 from sqlalchemy.orm import Mapped, mapped_column
-
+from sqlalchemy import ForeignKey
 
 class BranchesORM(Base):
     __tablename__ = "branches"
@@ -18,4 +18,31 @@ class CategoriesORM(Base):
     category_description: Mapped[str] = mapped_column(nullable=True)
     showing_number: Mapped[int] = mapped_column(unique=True, nullable=False)
     display_on_site: Mapped[bool] = mapped_column(nullable=False)
+
+class ProductsORM(Base):
+    __tablename__ = "products"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False)
+
+    category_id: Mapped[int | None] = mapped_column(
+        ForeignKey("categories.id"),
+        nullable=True
+    )
+
+    sale_price: Mapped[float] = mapped_column(nullable=False)
+    cost_price: Mapped[float] = mapped_column(nullable=False)
+
+    composition: Mapped[str | None] = mapped_column(nullable=True)
+    description: Mapped[str | None] = mapped_column(nullable=True)
+
+    calories: Mapped[int | None] = mapped_column(nullable=True)
+    protein: Mapped[float | None] = mapped_column(nullable=True)
+    fat: Mapped[float | None] = mapped_column(nullable=True)
+    carbs: Mapped[float | None] = mapped_column(nullable=True)
+
+    weight: Mapped[int | None] = mapped_column(nullable=True)
+    image_url: Mapped[str | None] = mapped_column(nullable=True)
+
+    is_visible: Mapped[bool] = mapped_column(nullable=False, default=True)
 

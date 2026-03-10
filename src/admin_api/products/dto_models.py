@@ -13,7 +13,6 @@ class ProductsAddDTO(BaseModel):
     fat: float | None = None
     carbs: float | None = None
     weight: int | None = None
-    image_url: str | None = None
     is_visible: bool
 
 
@@ -23,6 +22,7 @@ class ProductsUpdateDTO(ProductsAddDTO):
 
 class ProductsDTO(ProductsAddDTO):
     id: int = Field(gt=0)
+    image_url: str | None = None
 
 
 class MessageDTO(BaseModel):

@@ -33,7 +33,7 @@ class ProductsORM(Base):
     sale_price: Mapped[float] = mapped_column(nullable=False)
     cost_price: Mapped[float] = mapped_column(nullable=False)
 
-    composition: Mapped[str | None] = mapped_column(nullable=False)
+    composition: Mapped[str | None] = mapped_column(nullable=True)
     description: Mapped[str | None] = mapped_column(nullable=True)
 
     calories: Mapped[int | None] = mapped_column(nullable=False)

@@ -25,9 +25,9 @@ class ProductsORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
 
-    category_id: Mapped[int | None] = mapped_column(
+    category_id: Mapped[int] = mapped_column(
         ForeignKey("categories.id"),
-        nullable=True
+        nullable=False
     )
 
     sale_price: Mapped[float] = mapped_column(nullable=False)

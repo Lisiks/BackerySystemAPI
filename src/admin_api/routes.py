@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, UploadFile, File
+from fastapi import APIRouter, status, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from src.errors import NoRecordError
@@ -7,18 +7,9 @@ from src.admin_api.branches.views import create_branch, update_branch, get_all_b
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
 from src.admin_api.categories.dto_models import CategoriesDTO, CategoriesAddDTO
-from src.admin_api.products.views import (
-    create_product,
-    update_product,
-    get_all_products,
-    save_product_image
-)
-from src.admin_api.products.dto_models import (
-    ProductsDTO,
-    ProductsAddDTO,
-    ProductsUpdateDTO,
-    ProductImageUploadDTO
-)
+
+from src.admin_api.products.views import create_product, update_product, get_all_products
+from src.admin_api.products.dto_models import ProductsDTO, ProductsAddDTO, ProductsUpdateDTO, ProductsListDTO
 
 admin_route = APIRouter(prefix="/admin")
 
@@ -144,54 +135,55 @@ def put_category(current_category: CategoriesDTO):
     name="Получить данные обо всех товарах",
     summary="При помощи данного запроса должно производиться получение данных обо всех товарах "
             "для административного приложения.",
-    response_model=list[ProductsDTO],
+    response_model=ProductsListDTO,
     response_class=JSONResponse
 )
 def get_products():
     products = get_all_products()
-    return JSONResponse(content=products, status_code=status.HTTP_200_OK)
-
-@admin_route.post(
-    path="/products/upload_image",
-    tags=["Товары🥐"],
-    name="Загрузить изображение товара",
-    summary="При помощи данного запроса должно производиться сохранение изображения товара "
-            "на сервере и возврат пути к нему.",
-    response_model=ProductImageUploadDTO,
-    response_class=JSONResponse
-)
-def upload_product_image(image_file: UploadFile = File(...)):
-    try:
-        image_url = save_product_image(image_file)
-        return JSONResponse(
-            content={"image_url": image_url},
-            status_code=status.HTTP_200_OK
-        )
-    except ValueError as e:
-        return JSONResponse(
-            content={"message": "Validation error", "description": str(e)},
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
-        )
-    except Exception as e:
-        return JSONResponse(
-            content={"message": "Image save error", "description": str(e)},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-
+    return JSONResponse(content={"products": products}, status_code=status.HTTP_200_OK)
 
 @admin_route.post(
     path="/products/add",
     tags=["Товары🥐"],
     name="Добавить товар",
-    summary="При помощи данного запроса должно производиться создание товара на основе JSON данных, "
-            "полученных от фронтенда, и его сохранение в БД.",
+    summary="При помощи данного запроса должно производиться создание товара и загрузка его изображения "
+            "одним multipart-запросом.",
     response_class=JSONResponse
 )
-def post_product(new_product: ProductsAddDTO):
+def post_product(
+    name: str = Form(...),
+    category_id: int = Form(...),
+    sale_price: float = Form(...),
+    cost_price: float = Form(...),
+    composition: str = Form(...),
+    description: str = Form(...),
+    calories: int = Form(...),
+    protein: float = Form(...),
+    fat: float = Form(...),
+    carbs: float = Form(...),
+    weight: int = Form(...),
+    is_visible: bool = Form(...),
+    image_file: UploadFile = File(...)
+):
     try:
-        create_product(new_product)
+        new_product = ProductsAddDTO(
+            name=name,
+            category_id=category_id,
+            sale_price=sale_price,
+            cost_price=cost_price,
+            composition=composition,
+            description=description,
+            calories=calories,
+            protein=protein,
+            fat=fat,
+            carbs=carbs,
+            weight=weight,
+            is_visible=is_visible
+        )
+
+        create_product(new_product, image_file)
         return JSONResponse(content={"message": "ok"}, status_code=status.HTTP_200_OK)
+
     except IntegrityError as e:
         return JSONResponse(
             content={"message": "Integrity error", "description": e.args},
@@ -200,6 +192,11 @@ def post_product(new_product: ProductsAddDTO):
     except NoRecordError as e:
         return JSONResponse(
             content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+    except ValueError as e:
+        return JSONResponse(
+            content={"message": "Validation error", "description": str(e)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 
@@ -207,14 +204,46 @@ def post_product(new_product: ProductsAddDTO):
     path="/products/update",
     tags=["Товары🥐"],
     name="Изменить товар",
-    summary="При помощи данного запроса должно производиться изменение существующего товара "
-            "на основе JSON данных, полученных от фронтенда.",
+    summary="При помощи данного запроса должно производиться изменение товара. "
+            "При передаче нового изображения старое изображение удаляется, а новое сохраняется под id товара.",
     response_class=JSONResponse
 )
-def put_product(current_product: ProductsUpdateDTO):
+def put_product(
+    id: int = Form(...),
+    name: str = Form(...),
+    category_id: int = Form(...),
+    sale_price: float = Form(...),
+    cost_price: float = Form(...),
+    composition: str = Form(...),
+    description: str = Form(...),
+    calories: int = Form(...),
+    protein: float = Form(...),
+    fat: float = Form(...),
+    carbs: float = Form(...),
+    weight: int = Form(...),
+    is_visible: bool = Form(...),
+    image_file: UploadFile | None = File(None)
+):
     try:
-        update_product(current_product)
+        current_product = ProductsUpdateDTO(
+            id=id,
+            name=name,
+            category_id=category_id,
+            sale_price=sale_price,
+            cost_price=cost_price,
+            composition=composition,
+            description=description,
+            calories=calories,
+            protein=protein,
+            fat=fat,
+            carbs=carbs,
+            weight=weight,
+            is_visible=is_visible
+        )
+
+        update_product(current_product, image_file)
         return JSONResponse(content={"message": "ok"}, status_code=status.HTTP_200_OK)
+
     except IntegrityError as e:
         return JSONResponse(
             content={"message": "Integrity error", "description": e.args},
@@ -223,5 +252,10 @@ def put_product(current_product: ProductsUpdateDTO):
     except NoRecordError as e:
         return JSONResponse(
             content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+    except ValueError as e:
+        return JSONResponse(
+            content={"message": "Validation error", "description": str(e)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )

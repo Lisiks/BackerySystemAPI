@@ -2,17 +2,17 @@ from pydantic import BaseModel, Field
 
 
 class ProductsAddDTO(BaseModel):
-    name: str = Field(max_length=200)
-    category_id: int | None = None
-    sale_price: float
-    cost_price: float
-    composition: str | None = None
-    description: str | None = None
-    calories: int | None = None
-    protein: float | None = None
-    fat: float | None = None
-    carbs: float | None = None
-    weight: int | None = None
+    name: str = Field(min_length=1, max_length=200)
+    category_id: int = Field(gt=0)
+    sale_price: float = Field(gt=0)
+    cost_price: float = Field(ge=0)
+    composition: str = Field(min_length=1, max_length=1000)
+    description: str = Field(min_length=1, max_length=2000)
+    calories: int = Field(ge=0)
+    protein: float = Field(ge=0)
+    fat: float = Field(ge=0)
+    carbs: float = Field(ge=0)
+    weight: int = Field(gt=0)
     is_visible: bool
 
 
@@ -22,12 +22,12 @@ class ProductsUpdateDTO(ProductsAddDTO):
 
 class ProductsDTO(ProductsAddDTO):
     id: int = Field(gt=0)
-    image_url: str | None = None
+    image_url: str = Field(min_length=1, max_length=500)
+
+
+class ProductsListDTO(BaseModel):
+    products: list[ProductsDTO]
 
 
 class MessageDTO(BaseModel):
     message: str
-
-
-class ProductImageUploadDTO(BaseModel):
-    image_url: str

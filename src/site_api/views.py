@@ -55,7 +55,6 @@ def get_all_available_products_by_category():
                     "products": [ProductsGetDTO.model_validate(product_record, from_attributes=True).dict()
                                  for product_record in orm_record.visible_category_products]
                 })
-        print(result)
         return result
 
 

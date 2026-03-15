@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     DIRECTORY_NAME: str = "src"
     PRODUCT_IMAGE_DIR: str = "src/static/products"
 
+    CORS_ORIGINS: list = ["*"]
+    CORS_ALLOW_CREDENTIALS: bool = False
+    CORS_ALLOW_METHODS: list = ["GET", "POST", "PUT"]
+    CORS_ALLOW_HEADERS: list = ["*"]
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @property

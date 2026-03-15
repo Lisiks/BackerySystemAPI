@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
-from fastapi import HTTPException, Response, status
-from jose import jwt
+from fastapi import HTTPException, Request, Response, status
+from jose import jwt, JWTError, ExpiredSignatureError
 from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from src.config import settings
 from src.database.orm_models import UsersORM
 from src.login_api.dto_models import (RegisterUserRequestDTO, RegisterUserResponseDTO, AuthenticateUserRequestDTO,
-                                      AuthenticateUserResponseDTO)
+                                      AuthenticateUserResponseDTO, RefreshAccessTokenResponseDTO)
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -61,6 +61,32 @@ def create_refresh_token(user_id: int, email: str) -> str:
         algorithm=settings.JWT_ALGORITHM,
     )
 
+def decode_refresh_token(refresh_token: str) -> dict:
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            settings.JWT_REFRESH_SECRET_KEY,
+            algorithms=[settings.JWT_ALGORITHM],
+        )
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh токен истёк",
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Некорректный refresh токен",
+        )
+
+    token_type = payload.get("type")
+    if token_type != "refresh":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Передан не refresh токен",
+        )
+
+    return payload
 
 def register_user(
     data: RegisterUserRequestDTO,
@@ -158,5 +184,51 @@ def authenticate_user(
 
     return AuthenticateUserResponseDTO(
         access_token=access_token,
+        token_type="bearer",
+    )
+
+def refresh_access_token(
+    request: Request,
+    session: Session,
+) -> RefreshAccessTokenResponseDTO:
+    refresh_token = request.cookies.get(settings.REFRESH_COOKIE_NAME)
+
+    if not refresh_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh токен отсутствует в cookies",
+        )
+
+    payload = decode_refresh_token(refresh_token)
+
+    user_id = payload.get("sub")
+    email = payload.get("email")
+
+    if not user_id or not email:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Некорректный payload refresh токена",
+        )
+
+    user = session.scalar(
+        select(UsersORM).where(UsersORM.id == int(user_id))
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Пользователь не найден",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Пользователь деактивирован",
+        )
+
+    new_access_token = create_access_token(user.id, user.email)
+
+    return RefreshAccessTokenResponseDTO(
+        access_token=new_access_token,
         token_type="bearer",
     )

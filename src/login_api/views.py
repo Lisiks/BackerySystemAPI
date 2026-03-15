@@ -14,6 +14,56 @@ from src.login_api.dto_models import (RegisterUserRequestDTO, RegisterUserRespon
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+def validate_access_token(access_token: str, session: Session) -> UsersORM:
+    try:
+        payload = jwt.decode(
+            access_token,
+            settings.JWT_SECRET_KEY,
+            algorithms=[settings.JWT_ALGORITHM],
+        )
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access токен истёк",
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Некорректный access токен",
+        )
+
+    token_type = payload.get("type")
+    if token_type != "access":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Передан не access токен",
+        )
+
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Некорректный payload токена",
+        )
+
+    user = session.scalar(
+        select(UsersORM).where(UsersORM.id == int(user_id))
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Пользователь не найден",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Пользователь деактивирован",
+        )
+
+    return user
+
 
 def hash_password(password: str) -> str:
     if len(password.encode("utf-8")) > 72:

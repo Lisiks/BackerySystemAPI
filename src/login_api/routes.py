@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Request
 from sqlalchemy.orm import Session
 
 from src.database.database import session_fabric
 from src.login_api.dto_models import (RegisterUserRequestDTO, RegisterUserResponseDTO, AuthenticateUserRequestDTO,
-                                      AuthenticateUserResponseDTO)
-from src.login_api.views import register_user, authenticate_user
+                                      AuthenticateUserResponseDTO, RefreshAccessTokenResponseDTO)
+from src.login_api.views import register_user, authenticate_user, refresh_access_token
 
 
 login_route = APIRouter(prefix="/login", tags=["Логин"])
@@ -40,3 +40,15 @@ def authenticate_user_route(
     session: Session = Depends(get_db),
 ):
     return authenticate_user(data=data, response=response, session=session)
+
+@login_route.post(
+    "/refresh",
+    response_model=RefreshAccessTokenResponseDTO,
+    status_code=200,
+    summary="Обновление access токена",
+)
+def refresh_access_token_route(
+    request: Request,
+    session: Session = Depends(get_db),
+):
+    return refresh_access_token(request=request, session=session)

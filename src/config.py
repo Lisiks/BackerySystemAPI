@@ -7,7 +7,9 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     DB_PORT: int
+
     DIRECTORY_NAME: str = "src"
+    PRODUCT_IMAGE_DIR: str = "src/static/products"
 
     model_config = SettingsConfigDict(env_file=".env")
 

@@ -42,6 +42,9 @@
     scroll-padding-top: calc(100px + 10vh); 
 }
 
+/* .hidden-element {
+    display: none;
+} */
 
 body {
     min-height: 100vh;
@@ -52,7 +55,7 @@ body {
 
 header {
     position: sticky;
-    z-index: 3;
+    z-index: 2;
     left: 0px;
     top: 0px;
 
@@ -131,10 +134,8 @@ header {
 
 /* ------------------------------------------------------------------Основная часть----------------------------------------------- */
 
-#main {
-    background-color: blue
+main {
     z-index: 1;
-    position: relative
 }
 
 /* -----------------------------------------------------------------Подвал----------------------------------------------------------------*/
@@ -276,5 +277,37 @@ footer > p, #footer-contacts-info > p {
 }
 
 
+/*------------------------------------------------------------Боковая панель-----------------------------------------------------------*/
+
+
+#aside-block {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 3;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: var(--transition-settings);
+}
+
+#aside-panel {
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    z-index: 4;
+
+    width: calc(250px + 15vw);
+    height: 100vh;
+
+    background-color: white;
+    transition: var(--transition-settings);
+}
+
+.hidden-block {
+    display: none;
+}
 
 

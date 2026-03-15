@@ -25,14 +25,10 @@
             {% endblock %}
         </div>
     </header>
-    <main id="main">
-        <div>
-            {% block content %}
-            {% endblock %}
-        </div>
-        <aside>
 
-        </aside>
+    <main>
+        {% block content %}
+        {% endblock %}
     </main>
 
     <footer id="footer-block">
@@ -61,6 +57,11 @@
 
         </div>
     </footer>
+
+
+    <div id="aside-block" class="hidden-block">
+        <div id="aside-panel"></div>
+    </div>
 
     {% block page_js %}
     {% endblock %}

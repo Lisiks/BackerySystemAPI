@@ -47,9 +47,9 @@ def get_all_available_products_by_category():
         ).order_by(CategoriesORM.showing_number)
 
         orm_result = session.execute(query).scalars().all()
-        result = {"products": []}
+        result = {"categories": []}
         for orm_record in orm_result:
-            result["products"].append(
+            result["categories"].append(
                 {
                     "category_id": orm_record.id,
                     "products": [ProductsGetDTO.model_validate(product_record, from_attributes=True).dict()

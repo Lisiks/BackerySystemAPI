@@ -1,0 +1,66 @@
+.category-block {
+    margin: 10px 10vw;
+}
+
+.category-block > h2 {
+    margin: 20px 0px;
+
+    font-family: "Istok Web";
+    font-size: var(--h2-font-size);
+    color: var(--dark-brown-color);
+    text-align: center;
+}
+
+.product-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: calc(10px + 1vw);
+}
+
+.product-card {
+    padding: 10px 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    border: 2px solid var(--dark-brown-color);
+    border-radius: 30px;
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+
+}
+
+.product-card > img {
+    width: calc(160px + 7vw);
+    height: calc(160px + 7vw);
+    border-radius: 30px;
+}
+
+.product-price-span {
+    font-weight: bold;
+}
+
+.product-weight-span {
+    color: gray;
+}
+
+.in-cart-button {
+    align-self: flex-end;
+
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+    padding: 10px;
+    color: var(--header-background-color);
+    background-color: var(--dark-brown-color);
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+
+    transition: var(--transition-settings);
+}
+
+.in-cart-button:hover {
+    transform: scale(1.05);
+}

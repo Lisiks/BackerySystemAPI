@@ -18,3 +18,4 @@ class ProductsGetDTO(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     sale_price: float = Field(gt=0)
     weight: int = Field(gt=0)
+    image_url: str = Field(min_length=1, max_length=500)

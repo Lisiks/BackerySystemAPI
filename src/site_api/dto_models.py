@@ -11,3 +11,10 @@ class CategoriesGetDTO(BaseModel):
     id: int = Field(gt=0)
     category_name: str = Field(max_length=100)
     showing_number: int = Field(gt=0)
+
+
+class ProductsGetDTO(BaseModel):
+    id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=200)
+    sale_price: float = Field(gt=0)
+    weight: int = Field(gt=0)

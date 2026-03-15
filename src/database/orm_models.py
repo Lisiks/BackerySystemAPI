@@ -20,8 +20,9 @@ class CategoriesORM(Base):
     showing_number: Mapped[int] = mapped_column(unique=True, nullable=False)
     display_on_site: Mapped[bool] = mapped_column(nullable=False)
 
-    products: Mapped[list['ProductsORM']] = relationship(
-        back_populates="category"
+    visible_category_products: Mapped[list['ProductsORM']] = relationship(
+        back_populates="category",
+        primaryjoin="and_(CategoriesORM.id == ProductsORM.category_id, ProductsORM.is_visible == True)"
     )
 
 
@@ -31,7 +32,7 @@ class ProductsORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
     category_id: Mapped[int] = mapped_column(
-        ForeignKey("categories.id"),
+        ForeignKey("categories.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False
     )
     sale_price: Mapped[float] = mapped_column(nullable=False)
@@ -47,5 +48,5 @@ class ProductsORM(Base):
     is_visible: Mapped[bool] = mapped_column(nullable=False, default=True)
 
     category: Mapped['CategoriesORM'] = relationship(
-        back_populates="products"
+        back_populates="visible_category_products"
     )

@@ -1,7 +1,9 @@
 from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
+
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 
 def get_branches_info():
@@ -32,3 +34,28 @@ def get_categories_info():
         orm_result = session.execute(query).all()
         return [CategoriesGetDTO.model_validate(orm_record, from_attributes=True)
                 .dict() for orm_record in orm_result]
+
+
+def get_all_available_products_by_category():
+    with session_fabric() as session:
+        query = select(
+            CategoriesORM
+        ).options(
+            selectinload(CategoriesORM.visible_category_products)
+        ).where(
+            CategoriesORM.display_on_site == True
+        ).order_by(CategoriesORM.showing_number)
+
+        orm_result = session.execute(query).scalars().all()
+        result = {"products": []}
+        for orm_record in orm_result:
+            result["products"].append(
+                {
+                    "category_id": orm_record.id,
+                    "products": [ProductsGetDTO.model_validate(product_record, from_attributes=True).dict()
+                                 for product_record in orm_record.visible_category_products]
+                })
+        print(result)
+        return result
+
+

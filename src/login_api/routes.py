@@ -9,7 +9,7 @@ from src.login_api.dto_models import (RegisterUserRequestDTO, RegisterUserRespon
 from src.login_api.views import register_user, authenticate_user, refresh_access_token, validate_access_token
 
 
-login_route = APIRouter(prefix="/login", tags=["Логин"])
+login_route = APIRouter(prefix="/site/login", tags=["Логин"])
 security = HTTPBearer()
 
 def get_db():

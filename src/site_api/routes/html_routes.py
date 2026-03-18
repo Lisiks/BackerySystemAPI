@@ -16,7 +16,7 @@ def index(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"branches": branches, "categories": categories}
+        context={"branches": branches, "categories": categories, "domain": settings.full_domain}
     )
 
 
@@ -28,5 +28,10 @@ def product_page(request: Request, product_id: int = Path(gt=0)):
     return templates.TemplateResponse(
         request=request,
         name="product.html",
-        context={"branches": branches, "categories": categories, "product": product_info}
+        context={
+            "branches": branches,
+            "categories": categories,
+            "product": product_info,
+            "domain": settings.full_domain
+        }
     )

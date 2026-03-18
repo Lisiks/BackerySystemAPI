@@ -14,5 +14,5 @@ site_data_route = APIRouter(prefix="/sitedata")
     response_class=JSONResponse
 )
 def get_available_products():
-    products = get_all_available_products_by_category()
-    return JSONResponse(content=products, status_code=status.HTTP_200_OK)
+    products_by_categories = get_all_available_products_by_category()
+    return JSONResponse(content={"categories": products_by_categories}, status_code=status.HTTP_200_OK)

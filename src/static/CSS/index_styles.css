@@ -30,12 +30,22 @@
     font-family: "Wix Madefor Text";
     font-size: var(--normal-font-size);
 
+    cursor: pointer;
+    transition: var(--transition-settings);
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
 }
 
 .product-card > img {
     width: calc(160px + 7vw);
     height: calc(160px + 7vw);
     border-radius: 30px;
+}
+
+.product-card > p {
+    width: calc(160px + 7vw);
 }
 
 .product-price-span {

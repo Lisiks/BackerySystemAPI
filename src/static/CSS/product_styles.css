@@ -73,7 +73,7 @@
 }
 
 
-#in-cart-button {
+.in-cart-button {
     width: calc(20px + 15vw);
     font-family: "Wix Madefor Text";
     font-size: var(--normal-font-size);

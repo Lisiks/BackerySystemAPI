@@ -1,0 +1,97 @@
+@keyframes window-scaling {
+    0% {
+        transform: scale(0.95);
+    }
+
+
+    100% {
+        transform: scale(1.00);
+    }
+    
+}
+
+
+#adding-window-bg {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 3;
+
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.35);
+
+    justify-content: center;
+    align-items: center;
+}
+
+#adding-window {
+    padding: 20px;
+    background-color: white;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    animation-name: window-scaling;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+#adding-window > img {
+    width: calc(200px + 10vw);
+    height: calc(200px + 10vw);
+    border-radius: 30px;
+}
+
+
+#adding-window > p, #adding-window > div > p {
+    max-width: calc(200px + 10vw);
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+}
+
+#productPriceLabel {
+    font-weight: bold;
+}
+ 
+#adding-window > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#adding-window > div > button {
+    border: 1px solid gray;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: var(--normal-font-size);
+    background-color: white;
+
+    transition: all 0.3s 0s ease-in-out;
+}
+
+#adding-window > button {
+    color: var(--header-background-color);
+    padding: 10px;
+    font-family: "Wix Madefor Text";
+    border: none;
+    height: calc(30px + 2vh);
+    border-radius: 20px;
+    background-color: rgb(80, 39, 0);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    transition: all 0.3s 0s ease-in-out;
+}
+
+#adding-window > div > button:hover, 
+#adding-window > button:hover {
+    transform: scale(1.04);
+}
+
+

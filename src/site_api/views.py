@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 
+
 def get_branches_info():
     with session_fabric() as session:
         query = select(
@@ -47,14 +48,17 @@ def get_all_available_products_by_category():
         ).order_by(CategoriesORM.showing_number)
 
         orm_result = session.execute(query).scalars().all()
-        result = {"categories": []}
+        result = dict()
         for orm_record in orm_result:
-            result["categories"].append(
-                {
-                    "category_id": orm_record.id,
-                    "products": [ProductsGetDTO.model_validate(product_record, from_attributes=True).dict()
-                                 for product_record in orm_record.visible_category_products]
-                })
+            result[orm_record.id] = dict()
+            for product_record in orm_record.visible_category_products:
+                dto_record = ProductsGetDTO.model_validate(product_record, from_attributes=True)
+                result[orm_record.id][dto_record.id] = {
+                    "name": dto_record.name,
+                    "sale_price": dto_record.sale_price,
+                    "weight": dto_record.weight,
+                    "image_irl": dto_record.image_url
+                }
         return result
 
 

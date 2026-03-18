@@ -58,3 +58,29 @@ def get_all_available_products_by_category():
         return result
 
 
+def get_product_info_by_id(product_id):
+    with session_fabric() as session:
+        query = select(
+            ProductsORM.id,
+            ProductsORM.name,
+            ProductsORM.weight,
+            ProductsORM.sale_price,
+            ProductsORM.image_url,
+            ProductsORM.composition,
+            ProductsORM.description,
+            ProductsORM.calories,
+            ProductsORM.protein,
+            ProductsORM.fat,
+            ProductsORM.carbs,
+            CategoriesORM.category_name
+        ).select_from(ProductsORM).join(
+            CategoriesORM,
+            CategoriesORM.id == ProductsORM.category_id
+        ).where(ProductsORM.id == product_id)
+
+        orm_result = session.execute(query).one()
+        return ProductsFullInfoDTO.model_validate(orm_result, from_attributes=True).dict()
+
+
+
+

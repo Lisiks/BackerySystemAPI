@@ -1,7 +1,4 @@
 
-
-
-
 /* Основной контейнер */
 #content {
   display: grid;
@@ -88,7 +85,7 @@
 #liked-button {
   width: calc(45px + 1vw);
   background-color: transparent;
-  background-image: url('static_images/liked_button_image.png');
+  background-image: url('../StaticImages/liked_button_image.png');
   background-position: center;
   background-size: cover;
 }

@@ -29,7 +29,7 @@
     <div class="text-section">
         <h2>{{ product['name'] }}</h2>
 
-        <p class="istok-web">{{ product['price'] }} р&nbsp&nbsp&nbsp<span class="gray-text">{{ product['weight'] }} г</span></p>
+        <p class="istok-web">{{ product['sale_price'] }} р&nbsp&nbsp&nbsp<span class="gray-text">{{ product['weight'] }} г</span></p>
         <p class="wix-madefor-text"><span class="gray-text">{{ product['category_name'] }}</span></p>
 
         <div id="product-activity-buttons">
@@ -37,9 +37,9 @@
             <button type="button" id="liked-button"></button>
         </div>
 
-        <p class="gray-underline wix-madefor-text">{{ product['description'] }}</p>
+        <p class="gray-underline wix-madefor-text">Описание: {{ product['description'] }}</p>
          
-        <p class="gray-underline wix-madefor-text">{{ product['composition'] }}</p>
+        <p class="gray-underline wix-madefor-text">Состав: {{ product['composition'] }}</p>
            
         <div class="text-section-energy gray-underline wix-madefor-text">Энергетическая ценность:
             <p>Белков — {{ product['protein'] }} г</p>

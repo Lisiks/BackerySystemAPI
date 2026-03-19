@@ -9,7 +9,7 @@ from src.admin_api.categories.views import create_category, get_all_categories, 
 from src.admin_api.categories.dto_models import CategoriesDTO, CategoriesAddDTO
 
 from src.admin_api.products.views import create_product, update_product, get_all_products
-from src.admin_api.products.dto_models import ProductsDTO, ProductsAddDTO, ProductsUpdateDTO, ProductsListDTO
+from src.admin_api.products.dto_models import ProductsAddDTO, ProductsUpdateDTO
 
 admin_route = APIRouter(prefix="/admin")
 
@@ -129,18 +129,19 @@ def put_category(current_category: CategoriesDTO):
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 
+
 @admin_route.get(
     path="/products",
     tags=["Товары🥐"],
     name="Получить данные обо всех товарах",
     summary="При помощи данного запроса должно производиться получение данных обо всех товарах "
             "для административного приложения.",
-    response_model=ProductsListDTO,
     response_class=JSONResponse
 )
 def get_products():
     products = get_all_products()
     return JSONResponse(content={"products": products}, status_code=status.HTTP_200_OK)
+
 
 @admin_route.post(
     path="/products/add",
@@ -199,6 +200,7 @@ def post_product(
             content={"message": "Validation error", "description": str(e)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
 
 @admin_route.put(
     path="/products/update",

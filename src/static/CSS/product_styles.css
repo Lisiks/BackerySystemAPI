@@ -1,0 +1,98 @@
+
+/* Основной контейнер */
+#content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px; /* Отступ между фото и текстом */
+}
+
+/* Левая секция с фото - 45% */
+#photo-section {
+  position: relative;
+  padding: 30px;
+}
+
+#photo-section > img {
+  width: 100%;
+  border-radius: 25px;
+}
+
+.gray-text {
+    color: gray;
+    font-size: calc(var(--small-font-size) + 0.4vw);
+}
+
+
+
+
+/* Правая секция с текстом - остальные 55% */
+.text-section {
+  padding: 20px;
+}
+
+/* Стили для текста */
+.text-section h2 {
+  font-family: "Wix Madefor Text";
+  font-size: var(--h2-font-size);
+  margin-bottom: 20px;
+}
+
+
+
+.wix-madefor-text {
+  font-family: "Wix Madefor Text";
+  font-size: var(--normal-font-size);
+  margin-bottom: 10px;
+}
+
+.istok-web {
+  font-family: "Istok Web";
+  font-size: var(--normal-font-size);
+}
+
+
+#product-activity-buttons {
+  height: calc(45px + 1vw);
+
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+#product-activity-buttons > button {
+  height: 100%;
+
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-settings);
+}
+
+#product-activity-buttons > button:hover {
+    transform: scale(1.05);
+}
+
+
+.in-cart-button {
+    width: calc(20px + 15vw);
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+    color: white;
+    background-color: var(--normal-browm-color);
+    border-radius: 15px;
+}
+
+#liked-button {
+  width: calc(45px + 1vw);
+  background-color: transparent;
+  background-image: url('../StaticImages/liked_button_image.png');
+  background-position: center;
+  background-size: cover;
+}
+
+.gray-underline {
+  border-top: 1px solid gray;
+}
+
+
+

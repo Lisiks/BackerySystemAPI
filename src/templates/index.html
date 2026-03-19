@@ -1,12 +1,19 @@
 {% extends 'base_template.html' %}
 
-{% block title%}
-    Пекарня 67 Вкусов: Каталог
+{% block page_title %}
+    <title>Пекарня 67 вкусов: Каталог</title>
+{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/base_template_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/index_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/shopping_cart_styles.css') }}">
 {% endblock %}
 
 {% block menu_links %}
     {% for category in categories %}
-        <a target="_self" href="#{{category['id']}}">{{category['category_name']}}</a>
+        <a target="_self" href="#{{'category-' + category['id'] | string }}">{{category['category_name']}}</a>
     {% endfor %}
     <a href="#footer-block">Контакты</a>
     <a href="#">Профиль</a>
@@ -16,16 +23,31 @@
 {% endblock %}
 
 {% block content %}
+    <div id="content">
     {% for category in categories %}
-        <div id="{{ category['id'] }}" class="category-block">
+        <div id="{{'category-' + category['id'] | string }}" class="category-block">
             <h2>{{ category['category_name'] }}</h2>
             <div class="product-container"></div>
         </div>
     {% endfor %}
+    </div>
 {% endblock %}
 
 {% block branch_contacts %}
     {% for branch in branches %}
         <p>{{ branch['branches_address'] }}, {{branch['branches_phone']}}</p>
     {% endfor %}
+{% endblock %}
+
+{% block page_windows %}
+    {% include '_add_product_window.html' %}
+    {% include '_shopping_cart.html' %}
+
+
+{% endblock %}
+
+{% block page_js %}
+    <script type="module" src="{{ url_for('static', path='JS/index_init.js')}}"></script>
+    <script src="{{ url_for('static', path='JS/add_product_init.js')}}"></script>
+    <script src="{{ url_for('static', path='JS/shopping_cart_init.js')}}"></script>
 {% endblock %}

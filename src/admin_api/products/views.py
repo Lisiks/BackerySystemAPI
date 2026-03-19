@@ -5,10 +5,7 @@ from src.database.database import session_fabric
 from src.database.orm_models import ProductsORM, CategoriesORM
 from src.admin_api.products.dto_models import ProductsAddDTO, ProductsDTO, ProductsUpdateDTO
 from src.errors import NoRecordError
-
-
-UPLOAD_DIR = "src/static/products"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+from src.config import settings
 
 
 def _validate_image_extension(filename: str) -> str:
@@ -34,7 +31,7 @@ def _absolute_path_from_image_url(image_url: str) -> str:
 def _save_product_image_by_id(product_id: int, image_file) -> str:
     extension = _validate_image_extension(image_file.filename)
     file_name = f"{product_id}{extension}"
-    file_path = os.path.join(UPLOAD_DIR, file_name)
+    file_path = os.path.join(settings.PRODUCT_IMAGE_DIR, file_name)
 
     with open(file_path, "wb") as file_object:
         file_object.write(image_file.file.read())
@@ -47,10 +44,7 @@ def get_all_products():
         query = select(ProductsORM).select_from(ProductsORM)
         orm_result = session.execute(query).scalars().all()
 
-        return [
-            ProductsDTO.model_validate(orm_record, from_attributes=True).dict()
-            for orm_record in orm_result
-        ]
+        return [ProductsDTO.model_validate(orm_record, from_attributes=True).dict() for orm_record in orm_result]
 
 
 def create_product(new_product: ProductsAddDTO, image_file):

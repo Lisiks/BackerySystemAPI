@@ -1,0 +1,230 @@
+@keyframes shoping-cart-moving {
+    0% {
+        right: -450px;
+    }
+
+    100% {
+        right: 0px;
+    }
+    
+}
+
+
+
+#black-shopping-cart-bg {
+    z-index: 3;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+#shopping-cart {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: calc(450px + 5vw);
+    height: 100vh;
+    padding: 20px 30px;
+
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    animation-name: shoping-cart-moving;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+
+}
+
+/*---------------------------------------------------Настройка заголовка панель---------------------------------------------------------------------*/
+
+#shoping-cart-header {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-bottom: 10px;
+    border-bottom: 1px solid gray;
+}
+
+#shoping-cart-header > h2 {
+    font-family: "Istok Web";
+    font-size: var(--h2-font-size);
+}
+
+#close-cart-button {
+    width: 35px;
+    height: 35px;
+
+    background-color: transparent;
+    border: none;
+    background-image: url("../StaticImages/close_button_image.png");
+    background-position: center;
+    background-size: cover;
+}
+
+/*---------------------------------------------------Настройка блоака товаров панели---------------------------------------------------------------------*/
+
+#shoping-cart-products-block {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 10px;
+
+    flex-grow: 1;
+}
+
+
+/*---------------------------------------------------Настройка абзаца стоимсоти ---------------------------------------------------------------------*/
+#shoping-cart-price-p {
+    font-family: "Istok Web";
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/*---------------------------------------------------Настройка кнопки оформления заказа ---------------------------------------------------------------------*/
+
+#shoping-cart-order-button {
+    color: white;
+    font-family: "Wix Madefor Text";
+    font-size: 18px;
+    height: calc(40px + 5vh);
+
+    border: none;
+    background-color: var(--dark-brown-color);
+    border-radius: 20px;
+}
+
+/*------------------------------------------------------- Блок с товаром ----------------------------------------------------------------*/
+
+.product-in-cart {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+
+    border: 1px solid gray;
+    border-radius: 20px;
+    gap: 10px;
+    padding: 10px;
+}
+
+.product-in-cart > img {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    border: 1px solid gray;
+}
+
+
+.product-in-cart-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 40%;
+    padding: 3px;
+}
+
+.product-name {
+    font-weight: bold;
+    font-family: "Wix Madefor Text";
+    word-break: break-all;
+    font-size: 18px;
+}
+
+.product-price {
+    font-family: "Wix Madefor Text";
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.product-weight {
+    font-family: "Wix Madefor Text";
+    font-size: 14px;
+}
+
+
+.product-in-cart-count {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    gap: 15px;
+}
+
+.product-in-cart-count > p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.product-in-cart-count > button {
+    width: 30px;
+    height: 30px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid gray;
+
+
+}
+
+.product-in-cart-change-button {
+    
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    
+}
+
+.product-in-cart-change-button > button {
+    width: 40px;
+    height: 40px;
+
+    background-color: transparent;
+    border: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.product-in-cart-change-button > .liked-position-button {
+    background-image: url("../StaticImages/liked_button_image.png");
+} 
+
+.product-in-cart-change-button > .delete-position-button {
+    background-image: url("../StaticImages/trash_image.png");
+} 
+
+
+
+#close-cart-button, .product-in-cart-change-button > .liked-position-button, .product-in-cart-change-button > .delete-position-button,
+.product-in-cart-count > button, #shoping-cart-order-button {
+    transition: all 0.3s 0s ease-in-out;
+}
+
+#close-cart-button:hover, .product-in-cart-change-button > .liked-position-button:hover, .product-in-cart-change-button:hover > .delete-position-button:hover,
+.product-in-cart-count > button:hover {
+    transform: scale(1.15);
+}
+
+#shoping-cart-order-button:hover {
+    transform: scale(1.05);
+}
+
+

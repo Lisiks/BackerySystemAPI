@@ -24,10 +24,3 @@ class ProductsDTO(ProductsAddDTO):
     id: int = Field(gt=0)
     image_url: str = Field(min_length=1, max_length=500)
 
-
-class ProductsListDTO(BaseModel):
-    products: list[ProductsDTO]
-
-
-class MessageDTO(BaseModel):
-    message: str

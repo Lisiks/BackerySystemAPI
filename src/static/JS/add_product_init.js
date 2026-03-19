@@ -27,7 +27,6 @@ function pageInit() {
         } else if (event.target.classList.contains("in-cart-button")) {
             event.stopImmediatePropagation();
             const currentProductId = event.target.getAttribute("productid") || event.target.productid;
-            console.log(currentProductId);
             const productInfoObj = JSON.parse(sessionStorage.getItem("productInfo"))[currentProductId];
 
             addingWindowElement.style.display = "flex";

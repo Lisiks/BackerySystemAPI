@@ -22,6 +22,12 @@ def _delete_file_if_exists(file_path: str):
     if file_path and os.path.exists(file_path):
         os.remove(file_path)
 
+def _delete_old_product_images(product_id: int):
+    for ext in (".jpg", ".jpeg", ".png", ".webp"):
+        old_file = os.path.join(UPLOAD_DIR, f"{product_id}{ext}")
+        if os.path.exists(old_file):
+            os.remove(old_file)
+
 
 def _absolute_path_from_image_url(image_url: str) -> str:
     normalized = image_url.lstrip("/").replace("/", os.sep)
@@ -102,9 +108,7 @@ def update_product(current_product: ProductsUpdateDTO, image_file=None):
         current_product_orm.is_visible = current_product.is_visible
 
         if image_file is not None and image_file.filename:
-            old_image_path = _absolute_path_from_image_url(current_product_orm.image_url)
-            _delete_file_if_exists(old_image_path)
-
+            _delete_old_product_images(current_product.id)
             new_image_url = _save_product_image_by_id(current_product.id, image_file)
             current_product_orm.image_url = new_image_url
 

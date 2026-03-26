@@ -180,7 +180,7 @@ export class ShoppingCart {
             return;
         }
 
-        const accessTokenJWT = localStorage.getItem('accessToken');
+        const accessTokenJWT = localStorage.getItem('bearer');
 
 
         if (accessTokenJWT === null) {

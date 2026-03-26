@@ -1,0 +1,46 @@
+<div id="account-window-bg" style="display: none;">
+    <form action="#" method="post" id="registration-window" style="display: none;" class="account-forms-class">
+        <h2>РЕГИСТРАЦИЯ</h2>
+        <p class="acc-form-p">Для создания заказов и их трекинга</p>
+        
+        
+
+        <p id="error-reg-name-p" style="display: none;" class="error-msg"></p>
+        <input type="text" placeholder="Имя" id="reg-window-login-input">
+        <p id="error-reg-email-p" style="display: none;" class="error-msg"></p>
+        <input type="email" placeholder="email" id="reg-window-email-input">
+        <p id="error-reg-password-p" style="display: none;" class="error-msg"></p>
+        <input type="password" placeholder="Пароль" id="reg-window-password-input">
+        <p id="error-reg-accured-p" style="display: none;" class="error-msg"></p>
+        <div class="checkbox-container">
+            <input type="checkbox" id="agree-checkbox" name="чекбокс" required>
+            <label for="agree-checkbox">Даю согласие на <a href="Политика обработки персональных данных на сайте булочной 67VKUSOV.pdf" download="Политика обработки персональных данных на сайте булочной 67VKUSOV.pdf">обработку персональных данных</a></label>
+        </div>
+
+
+        <div class="back-account-form-widgets">
+            <button type="submit" id="register-btn" class="account-inexit-btn">Зарегистрироваться</button>
+            <p>или</p>
+            <button type="button" class="switch-account-form-btn" id="to-auth-window-btn">Войти</button>
+        </div>
+    </form>
+
+    <form action="#" method="post" id="authorization-window" style="display: none;" class="account-forms-class">
+        <h2>ВХОД</h2>
+        <p class="acc-form-p">Войдите, чтобы сделать заказ</p>
+
+        <p id="error-auth-name-p" style="display: none;" class="error-msg"></p>
+        <input type="text" placeholder="Имя" id="auth-window-login-input">
+        <p id="error-auth-password-p" style="display: none;" class="error-msg"></p>
+        <input type="password" placeholder="Пароль" id="auth-window-password-input">
+                
+
+        <div class="back-account-form-widgets">
+            <a href="#" id="forgot-password-account-a">Забыли пароль?</a>
+            <button type="submit" id="authentification-btn" class="account-inexit-btn">Войти</button>
+            <p>или</p>
+            <button type="button" class="switch-account-form-btn" id="to-reg-window-btn">Зарегестрироваться</button>
+        </div>
+    </form>
+</div>
+

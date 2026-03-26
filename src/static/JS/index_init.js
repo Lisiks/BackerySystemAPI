@@ -1,11 +1,31 @@
 import { loadProducts } from "./server_queries.js";
+import { AddProductWindow } from "./add_product_module.js"
+import { ShoppingCart } from "./shopping_cart_module.js"
+import { UserAccountExitWindow } from "./user_account_module.js"
 
 async function pageInit() {
+
+    const exitAcciuntWindow = new UserAccountExitWindow();
+    const addingProductModalWindow = new AddProductWindow();
+    const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
+
+
+
+
+    const openProductCartBtn = document.getElementById('shopping-cart-button');
+
     document.addEventListener('click', (event) => {
-        const parentProductCardElement = event.target.closest('.product-card');
-        if (!event.target.classList.contains('in-cart-button') && parentProductCardElement) {
-            window.location.href = `${window.location.origin}/site/catalog/${parentProductCardElement.productId}`;
-        }
+        const currentProductCardElement = event.target.closest('.product-card')
+
+        if (event.target.classList.contains('in-cart-button')) {
+            const currentProductId = event.target.productId;    
+            addingProductModalWindow.openWindow(currentProductId);
+        } else if (currentProductCardElement) {
+            const currentProductId = currentProductCardElement.productId;
+            window.location.href = `${window.location.origin}/site/catalog/${currentProductId}`;
+        } else if (event.target === openProductCartBtn) {
+            shoppingCartModalWindow.openProductCart();
+;        }
     });
 
 
@@ -54,7 +74,7 @@ async function pageInit() {
             const inCartButtonElement = document.createElement('button');
             inCartButtonElement.textContent = 'В корзину';
             inCartButtonElement.classList.add('in-cart-button');
-            inCartButtonElement.productid = productId;
+            inCartButtonElement.productId = productId;
             newProductCardElement.append(inCartButtonElement);
 
 

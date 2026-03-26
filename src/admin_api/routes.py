@@ -211,7 +211,7 @@ def post_product(
     response_class=JSONResponse
 )
 def put_product(
-    id: int = Form(...),
+    product_id: int = Form(...),
     name: str = Form(...),
     category_id: int = Form(...),
     sale_price: float = Form(...),
@@ -228,7 +228,7 @@ def put_product(
 ):
     try:
         current_product = ProductsUpdateDTO(
-            id=id,
+            id=product_id,
             name=name,
             category_id=category_id,
             sale_price=sale_price,

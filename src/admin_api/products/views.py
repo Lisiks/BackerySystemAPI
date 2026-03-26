@@ -7,6 +7,10 @@ from src.admin_api.products.dto_models import ProductsAddDTO, ProductsDTO, Produ
 from src.errors import NoRecordError
 from src.config import settings
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+UPLOAD_DIR = os.path.join(BASE_DIR, "static", "products")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 
 def _validate_image_extension(filename: str) -> str:
     allowed_extensions = {".jpg", ".jpeg", ".png", ".webp"}
@@ -50,7 +54,7 @@ def get_all_products():
         query = select(ProductsORM).select_from(ProductsORM)
         orm_result = session.execute(query).scalars().all()
 
-        return [ProductsDTO.model_validate(orm_record, from_attributes=True).dict() for orm_record in orm_result]
+        return [ProductsDTO.model_validate(orm_record, from_attributes=True).model_dump() for orm_record in orm_result]
 
 
 def create_product(new_product: ProductsAddDTO, image_file):

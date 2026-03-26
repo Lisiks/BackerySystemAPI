@@ -54,8 +54,6 @@ class ProductsORM(Base):
         back_populates="visible_category_products"
     )
 
-    is_visible: Mapped[bool] = mapped_column(nullable=False, default=True)
-
 class UsersORM(Base):
     __tablename__ = "users"
 

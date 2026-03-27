@@ -222,7 +222,7 @@ footer > p, #footer-contacts-info > p {
 }
 
 #footer-contacts-form > input {
-    width: max(500px, 35vw);
+    width: calc(100px + 30vw);
     height: 60px;
     border: none;
     padding: 10px;
@@ -235,7 +235,7 @@ footer > p, #footer-contacts-info > p {
 }
 
 #footer-contacts-form > textarea {
-    width: max(500px, 35vw);
+     width: calc(100px + 30vw);
     height: 350px;
     border: none;
     padding: 10px;

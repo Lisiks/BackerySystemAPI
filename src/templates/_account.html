@@ -2,8 +2,6 @@
     <div id="registration-window" style="display: none;" class="account-forms-class">
         <h2>РЕГИСТРАЦИЯ</h2>
         <p class="acc-form-p">Для создания заказов и их трекинга</p>
-        
-        
 
         <p id="error-reg-name-p" style="display: none;" class="error-msg"></p>
         <input type="text" placeholder="Имя" id="reg-window-login-input">
@@ -14,9 +12,8 @@
         <p id="error-reg-accured-p" style="display: none;" class="error-msg"></p>
         <div class="checkbox-container">
             <input type="checkbox" id="agree-checkbox" name="чекбокс" required>
-            <label for="agree-checkbox">Даю согласие на <a href="Политика обработки персональных данных на сайте булочной 67VKUSOV.pdf" download="Политика обработки персональных данных на сайте булочной 67VKUSOV.pdf">обработку персональных данных</a></label>
+            <label for="agree-checkbox">Даю согласие на <a href="{{ url_for('static', path='Политика обработки персональных данных на сайте булочной 67VKUSOV.pdf') }}" download="Политика обработки персональных данных на сайте булочной 67VKUSOV.pdf">обработку персональных данных</a></label>
         </div>
-
 
         <div class="back-account-form-widgets">
             <button type="button" id="register-btn" class="account-inexit-btn">Зарегистрироваться</button>
@@ -33,7 +30,6 @@
         <input type="text" placeholder="Имя" id="auth-window-login-input">
         <p id="error-auth-password-p" style="display: none;" class="error-msg"></p>
         <input type="password" placeholder="Пароль" id="auth-window-password-input">
-                
 
         <div class="back-account-form-widgets">
             <a href="#" id="forgot-password-account-a">Забыли пароль?</a>

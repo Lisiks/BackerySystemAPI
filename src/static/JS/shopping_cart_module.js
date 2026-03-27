@@ -184,6 +184,8 @@ export class ShoppingCart {
 
 
         if (accessTokenJWT === null) {
+            this.shoppingCartWindowElement.style.display = 'none';
+            this.shoppingCartProductContainerElement.replaceChildren();
             this.userAccountWindowObj.showAccountExitForm();
         }
     }

@@ -1,7 +1,7 @@
 from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
-
+from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from src.errors import NoRecordError
@@ -128,3 +128,86 @@ def delete_product_from_favorites(user_id: int, product_id: int):
         session.commit()
 
 
+def create_order(user_id: int, order_data: OrderAddDTO):
+    with session_fabric() as session:
+        branch = session.get(BranchesORM, {"id": order_data.branch_id})
+        if branch is None:
+            raise NoRecordError(f"Филиал с id={order_data.branch_id} не найден")
+
+        if not branch.is_active_for_order:
+            raise ValueError("Указанный филиал недоступен для оформления заказа")
+
+        if len(order_data.items) == 0:
+            raise ValueError("Список товаров заказа не должен быть пустым")
+
+        product_ids = [item.product_id for item in order_data.items]
+
+        if len(product_ids) != len(set(product_ids)):
+            raise ValueError("Список товаров заказа содержит повторяющиеся позиции")
+
+        products = session.execute(
+            select(ProductsORM).where(ProductsORM.id.in_(product_ids))
+        ).scalars().all()
+
+        products_map = {product.id: product for product in products}
+
+        missing_ids = [product_id for product_id in product_ids if product_id not in products_map]
+        if missing_ids:
+            raise NoRecordError(
+                f"Не найдены товары с id={', '.join(map(str, missing_ids))}"
+            )
+
+        unavailable_ids = [
+            str(product.id) for product in products if not product.is_visible
+        ]
+        if unavailable_ids:
+            raise ValueError(
+                f"Недоступны для заказа товары с id={', '.join(unavailable_ids)}"
+            )
+
+        open_status = session.execute(
+            select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Открыт")
+        ).scalar_one_or_none()
+
+        if open_status is None:
+            open_status = OrderStatusesORM(status_name="Открыт")
+            session.add(open_status)
+            session.flush()
+
+        new_order = OrdersORM(
+            user_id=user_id,
+            phone=order_data.phone,
+            created_at=datetime.now(),
+            order_datetime=order_data.order_datetime,
+            branch_id=order_data.branch_id,
+            comment=order_data.comment,
+            status_id=open_status.id,
+            total_amount=0
+        )
+
+        session.add(new_order)
+        session.flush()
+
+        total_amount = 0
+
+        for item in order_data.items:
+            product = products_map[item.product_id]
+            item_total_price = product.sale_price * item.quantity
+            total_amount += item_total_price
+
+            new_order_item = OrderItemsORM(
+                order_id=new_order.id,
+                product_id=product.id,
+                quantity=item.quantity,
+                total_price=item_total_price
+            )
+            session.add(new_order_item)
+
+        new_order.total_amount = total_amount
+
+        session.commit()
+
+        return {
+            "message": "Заказ успешно создан",
+            "order_id": new_order.id
+        }

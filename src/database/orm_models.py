@@ -1,7 +1,7 @@
 from src.database.database import Base
-
+from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, Boolean
+from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text
 
 
 
@@ -77,3 +77,64 @@ class FavoriteProductsORM(Base):
         ForeignKey("products.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False
     )
+
+class OrderStatusesORM(Base):
+    __tablename__ = "order_statuses"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    status_name: Mapped[str] = mapped_column(nullable=False, unique=True)
+
+
+class OrdersORM(Base):
+    __tablename__ = "orders"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False
+    )
+
+    phone: Mapped[str] = mapped_column(String(30), nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False
+    )
+
+    order_datetime: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False
+    )
+
+    branch_id: Mapped[int] = mapped_column(
+        ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False
+    )
+
+    comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    status_id: Mapped[int] = mapped_column(
+        ForeignKey("order_statuses.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False
+    )
+
+    total_amount: Mapped[float] = mapped_column(nullable=False, default=0)
+
+
+class OrderItemsORM(Base):
+    __tablename__ = "order_items"
+
+    order_id: Mapped[int] = mapped_column(
+        ForeignKey("orders.id", ondelete="CASCADE", onupdate="CASCADE"),
+        primary_key=True
+    )
+
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        primary_key=True
+    )
+
+    quantity: Mapped[int] = mapped_column(nullable=False)
+
+    total_price: Mapped[float] = mapped_column(nullable=False)

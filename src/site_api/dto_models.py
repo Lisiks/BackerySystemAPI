@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from datetime import datetime
 
 
 class BranchesGetDTO(BaseModel):
@@ -35,3 +36,21 @@ class FavoriteProductAddDTO(BaseModel):
 
 class MessageDTO(BaseModel):
     message: str
+
+
+class OrderItemAddDTO(BaseModel):
+    product_id: int = Field(gt=0)
+    quantity: int = Field(gt=0)
+
+
+class OrderAddDTO(BaseModel):
+    phone: str = Field(min_length=5, max_length=30)
+    items: list[OrderItemAddDTO] = Field(min_length=1)
+    order_datetime: datetime
+    branch_id: int = Field(gt=0)
+    comment: str | None = Field(default=None, max_length=1000)
+
+
+class OrderCreateResponseDTO(BaseModel):
+    message: str
+    order_id: int = Field(gt=0)

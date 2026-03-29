@@ -2,9 +2,7 @@ from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from src.errors import NoRecordError
-from src.site_api.views import (get_all_available_products_by_category, add_product_to_favorites,
-                                delete_product_from_favorites)
+from src.site_api.views import *
 from src.site_api.dto_models import *
 from src.login_api.views import validate_access_token
 from src.database.database import session_fabric
@@ -31,7 +29,8 @@ def get_available_products():
     path="/favorites/add",
     tags=["Избранное❤️"],
     name="Добавить товар в избранное",
-    summary="Добавляет товар в избранное для текущего пользователя по access JWT token.",
+    summary="При помощи данного запроса должно производиться добавление товара в избранное для текущего пользователя"
+            " по access JWT токену.",
     response_model=MessageDTO,
     response_class=JSONResponse
 )
@@ -74,7 +73,8 @@ def post_favorite_product(
     path="/favorites/delete/{product_id}",
     tags=["Избранное❤️"],
     name="Удалить товар из избранного",
-    summary="Удаляет товар из избранного для текущего пользователя по access JWT token.",
+    summary="При помощи данного запроса должно производиться удаление товара из избранного для текущего пользователя"
+            " по access JWT токену.",
     response_model=MessageDTO,
     response_class=JSONResponse
 )
@@ -94,6 +94,50 @@ def delete_favorite_product(
         return JSONResponse(
             content={"message": "ОК"},
             status_code=status.HTTP_200_OK
+        )
+
+    except HTTPException as e:
+        return JSONResponse(
+            content={"message": "Ошибка авторизации", "description": e.detail},
+            status_code=e.status_code
+        )
+    except ValueError as e:
+        return JSONResponse(
+            content={"message": "Ошибка валидации", "description": str(e)},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "Ошибка отсутствующей записи", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@site_data_route.post(
+    path="/orders/add",
+    tags=["Заказы🧾"],
+    name="Создать заказ",
+    summary="При помощи данного запроса должно производиться создание нового заказа для текущего пользователя"
+            " по access JWT токену.",
+    response_model=OrderCreateResponseDTO,
+    response_class=JSONResponse
+)
+def post_order(
+    order_data: OrderAddDTO,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    try:
+        access_token = credentials.credentials
+
+        with session_fabric() as session:
+            user = validate_access_token(access_token, session)
+            user_id = user.id
+
+        result = create_order(user_id, order_data)
+
+        return JSONResponse(
+            content=result,
+            status_code=status.HTTP_201_CREATED
         )
 
     except HTTPException as e:

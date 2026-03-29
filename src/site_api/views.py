@@ -4,6 +4,7 @@ from src.site_api.dto_models import *
 
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from src.errors import NoRecordError
 
 
 
@@ -17,7 +18,7 @@ def get_branches_info():
 
         orm_result = session.execute(query).all()
         return [BranchesGetDTO.model_validate(orm_record, from_attributes=True)
-                .dict() for orm_record in orm_result]
+                .model_dump() for orm_record in orm_result]
 
 
 def get_categories_info():
@@ -34,7 +35,7 @@ def get_categories_info():
 
         orm_result = session.execute(query).all()
         return [CategoriesGetDTO.model_validate(orm_record, from_attributes=True)
-                .dict() for orm_record in orm_result]
+                .model_dump() for orm_record in orm_result]
 
 
 def get_all_available_products_by_category():
@@ -83,8 +84,47 @@ def get_product_info_by_id(product_id):
         ).where(ProductsORM.id == product_id)
 
         orm_result = session.execute(query).one()
-        return ProductsFullInfoDTO.model_validate(orm_result, from_attributes=True).dict()
+        return ProductsFullInfoDTO.model_validate(orm_result, from_attributes=True).model_dump()
+
+def add_product_to_favorites(user_id: int, product_id: int):
+    with session_fabric() as session:
+        product = session.get(ProductsORM, {"id": product_id})
+        if product is None:
+            raise NoRecordError(f"Товар с id={product_id} не найден")
+
+        favorite_query = select(FavoriteProductsORM).where(
+            FavoriteProductsORM.user_id == user_id,
+            FavoriteProductsORM.product_id == product_id
+        )
+        favorite = session.execute(favorite_query).scalar_one_or_none()
+
+        if favorite is not None:
+            raise ValueError("Товар уже добавлен в избранное")
+
+        new_favorite = FavoriteProductsORM(
+            user_id=user_id,
+            product_id=product_id
+        )
+
+        session.add(new_favorite)
+        session.commit()
 
 
+
+def delete_product_from_favorites(user_id: int, product_id: int):
+    with session_fabric() as session:
+        favorite_query = select(FavoriteProductsORM).where(
+            FavoriteProductsORM.user_id == user_id,
+            FavoriteProductsORM.product_id == product_id
+        )
+        favorite = session.execute(favorite_query).scalar_one_or_none()
+
+        if favorite is None:
+            raise NoRecordError(
+                f"Товар с id={product_id} отсутствует в избранном у пользователя"
+            )
+
+        session.delete(favorite)
+        session.commit()
 
 

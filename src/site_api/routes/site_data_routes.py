@@ -43,9 +43,8 @@ def post_favorite_product(
 
         with session_fabric() as session:
             user = validate_access_token(access_token, session)
-            user_id = user.id
+            add_product_to_favorites(user.id, favorite_product.product_id, session)
 
-        add_product_to_favorites(user_id, favorite_product.product_id)
 
         return JSONResponse(
             content={"message": "ОК"},
@@ -57,17 +56,33 @@ def post_favorite_product(
             content={"message": "Ошибка авторизации", "description": e.detail},
             status_code=e.status_code
         )
+
     except ValueError as e:
+        payload = e.args[0] if e.args else "Ошибка валидации"
+
+        if isinstance(payload, dict):
+            return JSONResponse(
+                content=payload,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+            )
+
         return JSONResponse(
-            content={"message": "Ошибка валидации", "description": str(e)},
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
-        )
-    except NoRecordError as e:
-        return JSONResponse(
-            content={"message": "Ошибка отсутствующей записи", "description": e.args},
+            content={"message": "Ошибка валидации", "description": str(payload)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 
+    except NoRecordError as e:
+        payload = e.args[0] if e.args else "Ошибка отсутствующей записи"
+
+        if isinstance(payload, dict):
+            return JSONResponse(
+                content=payload,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+            )
+        return JSONResponse(
+            content={"message": "Ошибка отсутствующей записи", "description": payload},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
 
 @site_data_route.delete(
     path="/favorites/delete/{product_id}",
@@ -87,9 +102,7 @@ def delete_favorite_product(
 
         with session_fabric() as session:
             user = validate_access_token(access_token, session)
-            user_id = user.id
-
-        delete_product_from_favorites(user_id, product_id)
+            delete_product_from_favorites(user.id, product_id, session)
 
         return JSONResponse(
             content={"message": "ОК"},
@@ -101,14 +114,31 @@ def delete_favorite_product(
             content={"message": "Ошибка авторизации", "description": e.detail},
             status_code=e.status_code
         )
+
     except ValueError as e:
+        payload = e.args[0] if e.args else "Ошибка валидации"
+
+        if isinstance(payload, dict):
+            return JSONResponse(
+                content=payload,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+            )
+
         return JSONResponse(
-            content={"message": "Ошибка валидации", "description": str(e)},
+            content={"message": "Ошибка валидации", "description": str(payload)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
     except NoRecordError as e:
+        payload = e.args[0] if e.args else "Ошибка отсутствующей записи"
+
+        if isinstance(payload, dict):
+            return JSONResponse(
+                content=payload,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+            )
         return JSONResponse(
-            content={"message": "Ошибка отсутствующей записи", "description": e.args},
+            content={"message": "Ошибка отсутствующей записи", "description": payload},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 
@@ -131,9 +161,7 @@ def post_order(
 
         with session_fabric() as session:
             user = validate_access_token(access_token, session)
-            user_id = user.id
-
-        result = create_order(user_id, order_data)
+            result = create_order(user.id, order_data, session)
 
         return JSONResponse(
             content=result,
@@ -145,13 +173,30 @@ def post_order(
             content={"message": "Ошибка авторизации", "description": e.detail},
             status_code=e.status_code
         )
+
     except ValueError as e:
+        payload = e.args[0] if e.args else "Ошибка валидации"
+
+        if isinstance(payload, dict):
+            return JSONResponse(
+                content=payload,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+            )
+
         return JSONResponse(
-            content={"message": "Ошибка валидации", "description": str(e)},
+            content={"message": "Ошибка валидации", "description": str(payload)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
     except NoRecordError as e:
+        payload = e.args[0] if e.args else "Ошибка отсутствующей записи"
+
+        if isinstance(payload, dict):
+            return JSONResponse(
+                content=payload,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+            )
         return JSONResponse(
-            content={"message": "Ошибка отсутствующей записи", "description": e.args},
+            content={"message": "Ошибка отсутствующей записи", "description": payload},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )

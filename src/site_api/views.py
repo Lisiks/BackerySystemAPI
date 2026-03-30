@@ -3,9 +3,10 @@ from src.database.orm_models import *
 from src.site_api.dto_models import *
 from datetime import datetime
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, Session
 from src.errors import NoRecordError
 
+OPEN_ORDER_STATUS_ID = 1
 
 
 def get_branches_info():
@@ -86,8 +87,7 @@ def get_product_info_by_id(product_id):
         orm_result = session.execute(query).one()
         return ProductsFullInfoDTO.model_validate(orm_result, from_attributes=True).model_dump()
 
-def add_product_to_favorites(user_id: int, product_id: int):
-    with session_fabric() as session:
+def add_product_to_favorites(user_id: int, product_id: int, session: Session):
         product = session.get(ProductsORM, {"id": product_id})
         if product is None:
             raise NoRecordError(f"Товар с id={product_id} не найден")
@@ -111,8 +111,7 @@ def add_product_to_favorites(user_id: int, product_id: int):
 
 
 
-def delete_product_from_favorites(user_id: int, product_id: int):
-    with session_fabric() as session:
+def delete_product_from_favorites(user_id: int, product_id: int, session: Session):
         favorite_query = select(FavoriteProductsORM).where(
             FavoriteProductsORM.user_id == user_id,
             FavoriteProductsORM.product_id == product_id
@@ -128,8 +127,7 @@ def delete_product_from_favorites(user_id: int, product_id: int):
         session.commit()
 
 
-def create_order(user_id: int, order_data: OrderAddDTO):
-    with session_fabric() as session:
+def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
         branch = session.get(BranchesORM, {"id": order_data.branch_id})
         if branch is None:
             raise NoRecordError(f"Филиал с id={order_data.branch_id} не найден")
@@ -137,13 +135,7 @@ def create_order(user_id: int, order_data: OrderAddDTO):
         if not branch.is_active_for_order:
             raise ValueError("Указанный филиал недоступен для оформления заказа")
 
-        if len(order_data.items) == 0:
-            raise ValueError("Список товаров заказа не должен быть пустым")
-
         product_ids = [item.product_id for item in order_data.items]
-
-        if len(product_ids) != len(set(product_ids)):
-            raise ValueError("Список товаров заказа содержит повторяющиеся позиции")
 
         products = session.execute(
             select(ProductsORM).where(ProductsORM.id.in_(product_ids))
@@ -153,26 +145,22 @@ def create_order(user_id: int, order_data: OrderAddDTO):
 
         missing_ids = [product_id for product_id in product_ids if product_id not in products_map]
         if missing_ids:
-            raise NoRecordError(
-                f"Не найдены товары с id={', '.join(map(str, missing_ids))}"
-            )
+            raise NoRecordError({
+                "message": "Часть товаров не найдена",
+                "ids": missing_ids
+            })
 
         unavailable_ids = [
-            str(product.id) for product in products if not product.is_visible
+            product.id
+            for product in products
+            if not product.is_visible or not product.category.display_on_site
         ]
+
         if unavailable_ids:
-            raise ValueError(
-                f"Недоступны для заказа товары с id={', '.join(unavailable_ids)}"
-            )
-
-        open_status = session.execute(
-            select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Открыт")
-        ).scalar_one_or_none()
-
-        if open_status is None:
-            open_status = OrderStatusesORM(status_name="Открыт")
-            session.add(open_status)
-            session.flush()
+            raise ValueError({
+                "message": "Часть товаров недоступна для оформления заказа",
+                "ids": unavailable_ids
+            })
 
         new_order = OrdersORM(
             user_id=user_id,
@@ -181,7 +169,7 @@ def create_order(user_id: int, order_data: OrderAddDTO):
             order_datetime=order_data.order_datetime,
             branch_id=order_data.branch_id,
             comment=order_data.comment,
-            status_id=open_status.id,
+            status_id=OPEN_ORDER_STATUS_ID,
             total_amount=0
         )
 

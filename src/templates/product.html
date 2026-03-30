@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/product_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/shopping_cart_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
 {% endblock %}
 
 {% block menu_links %}
@@ -19,7 +21,21 @@
     <a href="#">Профиль</a>
     <a href="#">Избранные товары</a>
     <a href="#">О компании</a>
-    <a href="#">FAQ</a>
+    <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+     <a href="#">Шоколадный глаз</a>
+
 {% endblock %}
 
 {% block content %}
@@ -35,7 +51,7 @@
         <p class="wix-madefor-text"><span class="gray-text">{{ product['category_name'] }}</span></p>
 
         <div id="product-activity-buttons">
-            <button type="button" class="in-cart-button" productid="{{ product['id'] }}">Добавить в корзину</button>
+            <button type="button" class="in-cart-button" productId="{{ product['id'] }}">Добавить в корзину</button>
             <button type="button" id="liked-button"></button>
         </div>
 
@@ -63,10 +79,9 @@
 {% block page_windows %}
     {% include '_add_product_window.html' %}
     {% include '_shopping_cart.html' %}
+    {% include '_account.html' %}
 {% endblock %}
 
 {% block page_js %}
     <script type="module" src="{{ url_for('static', path='JS/product_page_init.js')}}"></script>
-    <script src="{{ url_for('static', path='JS/add_product_init.js')}}"></script>
-    <script src="{{ url_for('static', path='JS/shopping_cart_init.js')}}"></script>
 {% endblock %}

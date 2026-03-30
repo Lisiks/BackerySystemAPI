@@ -1,0 +1,175 @@
+@keyframes window-scaling {
+    0% {
+        transform: scale(0.95);
+    }
+
+
+    100% {
+        transform: scale(1.00);
+    }
+    
+}
+
+
+#account-window-bg {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 5;
+
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.35);
+    
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+
+}
+
+.account-forms-class {
+    width: calc(400px + 12vw);
+    margin-top: 100px;
+
+    padding: 20px;
+
+    background-color: white;
+    border-radius: 15px;
+    flex-direction: column;
+    align-items: stretch;
+
+    animation-name: window-scaling;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.account-forms-class > h2 {
+    font-size: calc(30px + 0.5vw);
+    font-family: "Wix Madefor Text";
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.acc-form-p, .switch-account-form-btn,  .back-account-form-widgets > p, .back-account-form-widgets > a {
+    font-size: var(--normal-font-size);
+    font-family: "Wix Madefor Text";
+    text-align: center;
+    color: #666;
+    margin-top: 0px;
+    margin-bottom: 5px;
+
+    background-color: transparent;
+    border: none;
+}
+
+
+
+.account-forms-class > input {
+    font-size: var(--normal-font-size);
+    font-family: "Wix Madefor Text";
+
+    padding: 15px 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+   
+    margin-bottom: 15px;
+
+}
+
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.checkbox-container > input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+
+.checkbox-container label {
+    font-size: var(--normal-font-size);
+    font-family: "Wix Madefor Text";
+    color: #666;
+    cursor: pointer;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.checkbox-container label a {
+    color: var(--dark-brown-color);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: var(--transition-settings);
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.checkbox-container label a:hover {
+    text-decoration: none;
+}
+
+
+.account-inexit-btn {
+    position: relative;
+
+    background-color: var(--dark-brown-color);
+    color: white;
+    padding: 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: var(--transition-settings);
+    font-size: var(--normal-font-size);
+    font-family: "Wix Madefor Text";
+    
+}
+
+.account-inexit-btn:hover {
+    transform: scale(1.03);
+}
+
+
+.back-account-form-widgets {
+    margin-top: 10vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+}
+
+.switch-account-form-btn {
+    cursor: pointer;
+}
+
+.back-account-form-widgets > a {
+    align-self: flex-start;
+    text-decoration: none;
+
+}
+
+.back-account-form-widgets > a:hover, .switch-account-form-btn:hover {
+    text-decoration: solid underline;
+}
+
+
+.error-msg {
+    color: red;
+    text-align: justify;
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+}

@@ -65,6 +65,7 @@ def validate_access_token(access_token: str, session: Session) -> UsersORM:
     return user
 
 
+
 def hash_password(password: str) -> str:
     if len(password.encode("utf-8")) > 72:
         raise HTTPException(
@@ -72,6 +73,8 @@ def hash_password(password: str) -> str:
             detail="Пароль не должен быть длиннее 72 байт",
         )
     return pwd_context.hash(password)
+
+
 
 def verify_password(plain_password: str, password_hash: str) -> bool:
     if len(plain_password.encode("utf-8")) > 72:
@@ -282,3 +285,6 @@ def refresh_access_token(
         access_token=new_access_token,
         token_type="bearer",
     )
+
+
+

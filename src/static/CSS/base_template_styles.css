@@ -136,6 +136,7 @@ header {
 
 main {
     z-index: 1;
+    min-height: 50vh;
 }
 
 /* -----------------------------------------------------------------Подвал----------------------------------------------------------------*/
@@ -186,8 +187,8 @@ footer > p, #footer-contacts-info > p {
 
 #footer-contacts-info-messangers > a {
     display: block;
-    width: 80px;
-    height: 80px;
+    width: calc(40px + 3vw);
+    height: calc(40px + 3vw);
     
     background-position: center;
     background-size: cover;
@@ -222,7 +223,7 @@ footer > p, #footer-contacts-info > p {
 }
 
 #footer-contacts-form > input {
-    width: calc(100px + 30vw);
+    width: calc(150px + 30vw);
     height: 60px;
     border: none;
     padding: 10px;
@@ -235,7 +236,7 @@ footer > p, #footer-contacts-info > p {
 }
 
 #footer-contacts-form > textarea {
-     width: calc(100px + 30vw);
+     width: calc(150px + 30vw);
     height: 350px;
     border: none;
     padding: 10px;

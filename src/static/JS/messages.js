@@ -21,5 +21,5 @@ export function createMessage(title, content) {
         }
     });
 
-   
+        
 }

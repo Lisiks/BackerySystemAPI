@@ -1,0 +1,81 @@
+.menu_item_title {
+    font-family: "Istok Web";
+    font-size: 96px;
+    color: #3A0F00;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+#h2-header {
+    margin: 20px 0px;
+    font-family: "Istok Web";
+    font-size: var(--h2-font-size);
+    color: var(--dark-brown-color);
+    text-align: center;
+} 
+
+
+.questions {
+    font-family: "Istok Web";
+    font-variant: small-caps;
+    font-size: var(--normal-font-size);
+    margin-left: 200px;
+    margin-right: 200px;
+}
+
+.custom-details summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin: auto;
+}
+
+.custom-details summary::after {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../StaticImages/down-arrow.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.custom-details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.custom-details summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid grey;
+
+}
+
+.custom-details:first-child summary {
+  border-top: none;
+}
+
+
+.questions-text {
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+    background-color: #FFF6E5;
+    padding: 10px;
+    font-variant: normal;
+}
+
+.undersign {
+    font-family: "Wix Madefor Text";
+    font-size: var(--small-font-size);
+    margin-top: 10px;
+    margin-left: 200px;
+    margin-right: 200px;
+}

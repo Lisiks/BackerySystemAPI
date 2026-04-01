@@ -1,0 +1,107 @@
+
+
+
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+*:focus {
+    outline: none;
+}
+
+:root {
+    --dark-brown-color: #3A0F00;
+    --normal-browm-color: #BC9974;
+    --header-background-color: #FFF3DB;
+
+    --h1-font-size: calc(18px + 0.7vw);
+    --h2-font-size: calc(14px + 0.7vw);
+    --normal-font-size: calc(9px + 0.7vw);
+    --small-font-size: calc(2px + 0.7vw);
+
+    --transition-settings: all 0.3s 0s ease-in-out;
+}
+
+
+body {
+    min-height: 100vh;
+}
+
+
+.about-company-h2 {
+    margin: 20px 0px;
+
+    font-family: "Wix Madefor Text";
+    font-size: var(--h2-font-size);
+    color: var(--dark-brown-color);
+    text-align: center;
+}
+
+
+
+.content {
+    margin-left: 150px;
+    margin-right: 150px;
+}
+
+
+.text {
+    font-family: "Wix Madefor Text";
+    font-size: var(--normal-font-size);
+    text-align: justify;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#last-slider-button {
+    top: 50%;
+    left: 10px;
+}
+
+#next-slider-button {
+    top: 50%;
+    right:10px;
+}
+
+
+
+.slider {
+  position: relative;
+  width: 100%;
+}
+
+
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  width: calc(20px + 1vw);
+  height: calc(80px + 2vh);
+  border-radius: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.slider-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+
+.slider > img {
+    border-radius: 25px;
+    align-self: center;
+    width: 100%;
+}
+
+.content {
+    margin-bottom: 100px;
+}

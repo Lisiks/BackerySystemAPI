@@ -53,6 +53,8 @@
 }
 
 .product-weight-span {
+    margin-left: calc(2px + 0.5vw);
+    font-size: calc(var(--normal-font-size) - 3px);
     color: gray;
 }
 

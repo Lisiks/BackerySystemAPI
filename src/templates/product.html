@@ -20,22 +20,8 @@
     <a href="#footer-block">Контакты</a>
     <a href="#">Профиль</a>
     <a href="#">Избранные товары</a>
-    <a href="#">О компании</a>
-    <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-     <a href="#">Шоколадный глаз</a>
-
+    <a target="_self" href="{{domain + 'site/about/'}}">О компании</a>
+    <a target="_self" href="{{domain + 'site/faq/'}}">FAQ</a>
 {% endblock %}
 
 {% block content %}
@@ -47,7 +33,7 @@
     <div class="text-section">
         <h2>{{ product['name'] }}</h2>
 
-        <p class="istok-web">{{ product['sale_price'] }} р&nbsp&nbsp&nbsp<span class="gray-text">{{ product['weight'] }} г</span></p>
+        <p class="istok-web"><b>{{ product['sale_price'] }} р</b>&nbsp&nbsp&nbsp<span class="gray-text">{{ product['weight'] }} г</span></p>
         <p class="wix-madefor-text"><span class="gray-text">{{ product['category_name'] }}</span></p>
 
         <div id="product-activity-buttons">

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, Path
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from src.config import settings
 
@@ -8,7 +9,12 @@ html_route = APIRouter(prefix="/site")
 templates = Jinja2Templates(directory=settings.DIRECTORY_NAME + "/templates")
 
 
-@html_route.get("/catalog")
+@html_route.get(
+    path="/catalog",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница каталога сайта"
+)
 def index(request: Request):
     branches = get_branches_info()
     categories = get_categories_info()
@@ -20,7 +26,12 @@ def index(request: Request):
     )
 
 
-@html_route.get("/catalog/{product_id}")
+@html_route.get(
+    path="/catalog/{product_id}",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница изделия на сатйе"
+)
 def product_page(request: Request, product_id: int = Path(gt=0)):
     branches = get_branches_info()
     categories = get_categories_info()
@@ -34,4 +45,38 @@ def product_page(request: Request, product_id: int = Path(gt=0)):
             "product": product_info,
             "domain": settings.full_domain
         }
+    )
+
+
+@html_route.get(
+    path="/faq",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница faq сайта"
+)
+def index(request: Request):
+    branches = get_branches_info()
+    categories = get_categories_info()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="faq.html",
+        context={"branches": branches, "categories": categories, "domain": settings.full_domain}
+    )
+
+
+@html_route.get(
+    path="/about",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница о компании сайта"
+)
+def index(request: Request):
+    branches = get_branches_info()
+    categories = get_categories_info()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="about_company.html",
+        context={"branches": branches, "categories": categories, "domain": settings.full_domain}
     )

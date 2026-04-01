@@ -1,11 +1,9 @@
 import { loadProducts } from "./server_queries.js";
-import { AddProductWindow } from "./add_product_module.js"
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
-    const addingProductModalWindow = new AddProductWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const openProductCartBtn = document.getElementById('shopping-cart-button');
 
@@ -28,9 +26,6 @@ async function initPage() {
     document.addEventListener('click', (event) => {   
         if (event.target === openProductCartBtn) {
             shoppingCartModalWindow.openProductCart();
-        } else if (event.target.classList.contains('in-cart-button')) {
-            const currentProductId = event.target.getAttribute('productId');    
-            addingProductModalWindow.openWindow(currentProductId);
         }
   
     });

@@ -1,13 +1,19 @@
 import { loadProducts } from "./server_queries.js";
-import { AddProductWindow } from "./add_product_module.js"
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
-    const addingProductModalWindow = new AddProductWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const openProductCartBtn = document.getElementById('shopping-cart-button');
+
+    const nextPhotoSliderBtnElement = document.getElementById('next-slider-button');
+    const lastPhotoSliderBtnElement = document.getElementById('last-slider-button');
+    const sliderImgElement = document.getElementById('slider=content-ing');
+
+    const imageArray = ["/static/StaticImages/abci1.png", "/static/StaticImages/abci2.png", "/static/StaticImages/abci3.jpg"];
+    let currentSliderImg = 0;
+
 
     if (sessionStorage.getItem('productCart') === null) {
         sessionStorage.setItem('productCart', JSON.stringify({}));
@@ -25,15 +31,32 @@ async function initPage() {
     }
 
 
-    document.addEventListener('click', (event) => {   
+    document.addEventListener('click', (event) => {
         if (event.target === openProductCartBtn) {
             shoppingCartModalWindow.openProductCart();
-        } else if (event.target.classList.contains('in-cart-button')) {
-            const currentProductId = event.target.getAttribute('productId');    
-            addingProductModalWindow.openWindow(currentProductId);
         }
-  
+
+    });
+
+    nextPhotoSliderBtnElement.addEventListener('click', () => {
+        currentSliderImg = currentSliderImg === imageArray.length - 1 ? 0 : currentSliderImg + 1;
+        console.log(imageArray[currentSliderImg]);
+        sliderImgElement.src = imageArray[currentSliderImg];
+    });
+
+    lastPhotoSliderBtnElement.addEventListener('click', () => {
+        currentSliderImg = currentSliderImg === 0 ? imageArray.length - 1 : currentSliderImg - 1;
+        sliderImgElement.src = imageArray[currentSliderImg];
     });
 }
 
 initPage();
+
+
+
+
+
+
+
+
+

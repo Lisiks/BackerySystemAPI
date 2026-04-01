@@ -1,0 +1,61 @@
+{% extends 'base_template.html' %}
+
+{% block page_title %}
+    <title>FAQ</title>
+{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/base_template_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/shopping_cart_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/about_company_styles.css') }}">
+{% endblock %}
+
+{% block menu_links %}
+    {% for category in categories %}
+        <a target="_self" href="{{domain + 'site/catalog/' + '#category-' + category['id'] | string }}">{{category['category_name']}}</a>
+    {% endfor %}
+    <a href="#footer-block">Контакты</a>
+    <a href="#">Профиль</a>
+    <a href="#">Избранные товары</a>
+    <a target="_self" href="{{domain + 'site/about/'}}">О компании</a>
+    <a target="_self" href="{{domain + 'site/faq/'}}">FAQ</a>
+{% endblock %}
+
+{% block content %}
+
+    <div class="content">
+        <h2 class="about-company-h2">О компании</h2>
+        <p class="text">Всё началось в начале 2000-х годов в сердце города Кирова. Мы открыли нашу самую первую пекарню, движимые одной простой целью — создавать хлеб, вкус которого возвращает в детство. Мы начинали с крохотного цеха и пары рецептов, которыми делились наши бабушки, но очень быстро поняли: наш город заслуживает настоящего, честного продукта. За эти годы из маленькой семейной мастерской мы выросли в сеть, где каждый день сотни людей начинают утро с нашего кофе и свежей выпечки.</p>
+        <p class="text">Фундамент «67 Vkusov» — это не просто мука и вода, это наши принципы, которые мы не нарушаем уже около 20 лет. Мы чтим старинные рецептуры опарного брожения, потому что знаем: время — главный ингредиент хорошего хлеба. Не используем искусственные усилители вкуса или консерванты, продлевающие срок годности в ущерб качеству.</p>
+
+        <h2 class="about-company-h2">Производство</h2>
+        <p class="text">За кулисами каждой нашей пекарни стоит современный производственный комплекс. Мы готовим наши заготовки на высокотехнологичном оборудовании, которое позволяет сохранить «живой» вкус теста. Всю продукцию мы изготавливаем на собственном производстве, соблюдая строгий температурный режим. Транспортировка до пекарен происходит ежедневно на специализированном автотранспорте в часы, когда город еще спит. Это позволяет нам гарантировать, что к моменту, когда вы переступите порог «67 Vkusov», ваша булочка или хлеб будут не просто свежими, а по-настоящему горячими и ароматными.</p>
+
+        <div class="slider">
+            <img src="/static/StaticImages/abci1.png" alt="процесс производства" id="slider=content-ing">
+            <button type="button" id="last-slider-button" class="slider-btn">&lt</button>
+            <button type="button" id="next-slider-button" class="slider-btn">&gt</button>
+        </div>
+
+
+        <p class="text">Мы не просто продаем хлеб — мы создаем атмосферу. Мы верим, что счастье кроется в деталях: в хрустящей корочке, в аромате свежего круассана и в улыбке, с которой мы встречаем вас каждое утро. Для нас «67 Vkusov» — это способ сделать каждый ваш день чуть вкуснее, уютнее и добрее.</p>
+   </div>
+
+{% endblock %}
+
+{% block branch_contacts %}
+    {% for branch in branches %}
+        <p>{{ branch['branches_address'] }}, {{branch['branches_phone']}}</p>
+    {% endfor %}
+{% endblock %}
+
+
+{% block page_windows %}
+    {% include '_shopping_cart.html' %}
+    {% include '_account.html' %}
+{% endblock %}
+
+{% block page_js %}
+    <script type="module" src="{{ url_for('static', path='JS/about_company_init.js')}}"></script>
+{% endblock %}

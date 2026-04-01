@@ -100,8 +100,7 @@ export class UserAccountExitWindow {
     }
 
     register = async (event) => {
-        this.removeAllFormListeners();
-
+    
         const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
             
         const userName = this.regNameInputElement.value;
@@ -122,7 +121,7 @@ export class UserAccountExitWindow {
             this.showErrorLabel(this.regPasswordErrorMsgElement, 'Некорректная длина пароля (необходимая длина от 8 до 72 символов)');
             return;
         }
-
+        this.removeAllFormListeners();
 
         if (!this.regAccuredCHeckBElement.checked) {
             this.showErrorLabel(this.regAccuredErrorMsgElement, 'Поставте галочку для продолжения');
@@ -162,10 +161,7 @@ export class UserAccountExitWindow {
         this.addAllFormListeners();
     }
 
-    login = async(event) => {
-        this.removeAllFormListeners();
-
-            
+    login = async(event) => { 
         const userName = this.authNameInputElement.value;
         const userPwd = this.authPasswordInputElement.value;
 
@@ -178,7 +174,7 @@ export class UserAccountExitWindow {
             this.showErrorLabel(this.authPasswordErrorMsgElement, 'Некорректная длина пароля (необходимая длина от 8 до 72 символов)');
             return;
         }
-            
+        this.removeAllFormListeners();    
 
         const rawResult = await fetch(
             `${window.location.origin}/site/login/authenticate`, {

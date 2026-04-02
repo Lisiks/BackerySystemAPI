@@ -7,6 +7,10 @@ from src.admin_api.products.dto_models import ProductsAddDTO, ProductsDTO, Produ
 from src.errors import NoRecordError
 from src.config import settings
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+UPLOAD_DIR = os.path.join(BASE_DIR, "static", "products")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 
 def _validate_image_extension(filename: str) -> str:
     allowed_extensions = {".jpg", ".jpeg", ".png", ".webp"}
@@ -21,6 +25,12 @@ def _validate_image_extension(filename: str) -> str:
 def _delete_file_if_exists(file_path: str):
     if file_path and os.path.exists(file_path):
         os.remove(file_path)
+
+def _delete_old_product_images(product_id: int):
+    for ext in (".jpg", ".jpeg", ".png", ".webp"):
+        old_file = os.path.join(UPLOAD_DIR, f"{product_id}{ext}")
+        if os.path.exists(old_file):
+            os.remove(old_file)
 
 
 def _absolute_path_from_image_url(image_url: str) -> str:
@@ -44,7 +54,7 @@ def get_all_products():
         query = select(ProductsORM).select_from(ProductsORM)
         orm_result = session.execute(query).scalars().all()
 
-        return [ProductsDTO.model_validate(orm_record, from_attributes=True).dict() for orm_record in orm_result]
+        return [ProductsDTO.model_validate(orm_record, from_attributes=True).model_dump() for orm_record in orm_result]
 
 
 def create_product(new_product: ProductsAddDTO, image_file):
@@ -102,9 +112,7 @@ def update_product(current_product: ProductsUpdateDTO, image_file=None):
         current_product_orm.is_visible = current_product.is_visible
 
         if image_file is not None and image_file.filename:
-            old_image_path = _absolute_path_from_image_url(current_product_orm.image_url)
-            _delete_file_if_exists(old_image_path)
-
+            _delete_old_product_images(current_product.id)
             new_image_url = _save_product_image_by_id(current_product.id, image_file)
             current_product_orm.image_url = new_image_url
 

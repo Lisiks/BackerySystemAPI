@@ -11,7 +11,7 @@ def get_all_categories():
     with session_fabric() as session:
         query = select(CategoriesORM).select_from(CategoriesORM)
         orm_result = session.execute(query).scalars().all()
-        return [CategoriesDTO.model_validate(orm_record, from_attributes=True).dict()
+        return [CategoriesDTO.model_validate(orm_record, from_attributes=True).model_dump()
                 for orm_record in orm_result]
 
 

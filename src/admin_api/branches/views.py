@@ -10,7 +10,7 @@ def get_all_branches():
     with session_fabric() as session:
         query = select(BranchesORM).select_from(BranchesORM)
         orm_result = session.execute(query).scalars().all()
-        return [BranchesDTO.model_validate(orm_record, from_attributes=True).dict()
+        return [BranchesDTO.model_validate(orm_record, from_attributes=True).model_dump()
                 for orm_record in orm_result]
 
 

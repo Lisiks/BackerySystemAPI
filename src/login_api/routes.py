@@ -29,7 +29,7 @@ def verify_access_token(
 @login_route.post("/register",
                   response_model=RegisterUserResponseDTO,
                   status_code=201,
-                  summary="Регистрация пользователя")
+                  summary="При помощи данного запроса должно производиться регистрация пользователя.")
 def register_user_route(
     data: RegisterUserRequestDTO,
     response: Response,
@@ -41,7 +41,7 @@ def register_user_route(
     "/authenticate",
     response_model=AuthenticateUserResponseDTO,
     status_code=200,
-    summary="Аутентификация пользователя"
+    summary="При помощи данного запроса должно производиться аутентификация пользователя."
 )
 def authenticate_user_route(
     data: AuthenticateUserRequestDTO,
@@ -54,7 +54,7 @@ def authenticate_user_route(
     "/refresh",
     response_model=RefreshAccessTokenResponseDTO,
     status_code=200,
-    summary="Обновление access токена",
+    summary="При помощи данного запроса должно производиться обновление access токена.",
 )
 def refresh_access_token_route(
     request: Request,

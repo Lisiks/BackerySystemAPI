@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from src.errors import NoRecordError
 from src.database.database import session_fabric
 from src.admin_api.orders.views import get_user_orders
-from src.admin_api.employees.views import get_all_employees, delete_employee
+from src.admin_api.employees.dto_models import EmployeeDTO
+from src.admin_api.employees.views import get_all_employees, update_employee, delete_employee
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -317,6 +318,36 @@ def get_employees(
         content={"employees": employees},
         status_code=status.HTTP_200_OK
     )
+
+
+@admin_route.put(
+    path="/employees/update",
+    tags=["Сотрудники👥"],
+    name="Изменить сотрудника",
+    summary="При помощи данного запроса должно производиться изменение сотрудника "
+            "на основе поступивших из административного приложения данных.",
+    response_class=JSONResponse
+)
+def put_employee(
+    current_employee: EmployeeDTO,
+    session: Session = Depends(get_db),
+):
+    try:
+        update_employee(current_employee, session)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_200_OK
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+    except IntegrityError as e:
+        return JSONResponse(
+            content={"message": "Integrity error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
 
 
 @admin_route.delete(

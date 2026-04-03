@@ -23,6 +23,21 @@ def get_all_employees(session: Session):
         for employee in orm_result
     ]
 
+
+def update_employee(current_employee: EmployeeDTO, session: Session):
+    employee = session.get(EmployeesORM, current_employee.id)
+    if employee is None:
+        raise NoRecordError(f"No employee with id={current_employee.id}")
+
+    employee.full_name = current_employee.full_name
+    employee.phone = current_employee.phone
+    employee.birth_date = current_employee.birth_date
+    employee.position = current_employee.position
+    employee.work_address = current_employee.work_address
+
+    session.commit()
+
+
 def delete_employee(employee_id: int, session: Session):
     employee = session.get(EmployeesORM, employee_id)
     if employee is None:

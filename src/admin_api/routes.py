@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from src.errors import NoRecordError
 from src.database.database import session_fabric
 from src.admin_api.orders.views import get_user_orders
+from src.admin_api.employees.views import get_all_employees
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -298,3 +299,21 @@ def get_user_orders_route(
             content={"message": "No record error", "description": e.args},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
+
+@admin_route.get(
+    path="/employees",
+    tags=["Сотрудники👤"],
+    name="Получить данные обо всех сотрудниках",
+    summary="При помощи данного запроса должно производиться получение данных обо всех сотрудниках "
+            "для административного приложения.",
+    response_class=JSONResponse
+)
+def get_employees(
+    session: Session = Depends(get_db),
+):
+    employees = get_all_employees(session)
+    return JSONResponse(
+        content={"employees": employees},
+        status_code=status.HTTP_200_OK
+    )

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.admin_api.employees.dto_models import EmployeeDTO
 from src.database.orm_models import EmployeesORM
+from src.errors import NoRecordError
 
 
 def get_all_employees(session: Session):
@@ -21,3 +22,11 @@ def get_all_employees(session: Session):
         ).model_dump(mode="json")
         for employee in orm_result
     ]
+
+def delete_employee(employee_id: int, session: Session):
+    employee = session.get(EmployeesORM, employee_id)
+    if employee is None:
+        raise NoRecordError(f"No employee with id={employee_id}")
+
+    session.delete(employee)
+    session.commit()

@@ -8,7 +8,7 @@ from src.errors import NoRecordError
 from src.database.database import session_fabric
 from src.admin_api.orders.views import get_user_orders
 from src.admin_api.employees.dto_models import EmployeeDTO
-from src.admin_api.employees.views import get_all_employees, update_employee, delete_employee
+from src.admin_api.employees.views import get_all_employees, get_employee, update_employee, delete_employee
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -318,6 +318,31 @@ def get_employees(
         content={"employees": employees},
         status_code=status.HTTP_200_OK
     )
+
+
+@admin_route.get(
+    path="/employees/{employee_id}",
+    tags=["Сотрудники👥"],
+    name="Получить данные о сотруднике",
+    summary="При помощи данного запроса должно производиться получение данных "
+            "о конкретном сотруднике для административного приложения.",
+    response_class=JSONResponse
+)
+def get_employee_route(
+    employee_id: int,
+    session: Session = Depends(get_db),
+):
+    try:
+        employee = get_employee(employee_id, session)
+        return JSONResponse(
+            content={"employee": employee},
+            status_code=status.HTTP_200_OK
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
 
 
 @admin_route.put(

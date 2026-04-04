@@ -24,6 +24,14 @@ def get_all_employees(session: Session):
     ]
 
 
+def get_employee(employee_id: int, session: Session):
+    employee = session.get(EmployeesORM, employee_id)
+    if employee is None:
+        raise NoRecordError(f"No employee with id={employee_id}")
+
+    return EmployeeDTO.model_validate(employee, from_attributes=True).model_dump(mode="json")
+
+
 def update_employee(current_employee: EmployeeDTO, session: Session):
     employee = session.get(EmployeesORM, current_employee.id)
     if employee is None:

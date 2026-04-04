@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from src.errors import NoRecordError
 from src.database.database import session_fabric
 from src.admin_api.orders.views import get_user_orders
-from src.admin_api.employees.dto_models import EmployeeDTO
-from src.admin_api.employees.views import get_all_employees, get_employee, update_employee, delete_employee
+from src.admin_api.employees.dto_models import EmployeeDTO,  EmployeeAddDTO
+from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
+                                           delete_employee)
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -341,6 +342,30 @@ def get_employee_route(
     except NoRecordError as e:
         return JSONResponse(
             content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@admin_route.post(
+    path="/employees/add",
+    tags=["Сотрудники👥"],
+    name="Добавить сотрудника",
+    summary="Данный запрос предназначен для создания сотрудника на основании данных из административного приложения.",
+    response_class=JSONResponse
+)
+def post_employee(
+    new_employee: EmployeeAddDTO,
+    session: Session = Depends(get_db),
+):
+    try:
+        create_employee(new_employee, session)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_200_OK
+        )
+    except IntegrityError as e:
+        return JSONResponse(
+            content={"message": "Integrity error", "description": e.args},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 

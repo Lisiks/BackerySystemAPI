@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.admin_api.employees.dto_models import EmployeeDTO
+from src.admin_api.employees.dto_models import EmployeeDTO, EmployeeAddDTO
 from src.database.orm_models import EmployeesORM
 from src.errors import NoRecordError
 
@@ -30,6 +30,19 @@ def get_employee(employee_id: int, session: Session):
         raise NoRecordError(f"No employee with id={employee_id}")
 
     return EmployeeDTO.model_validate(employee, from_attributes=True).model_dump(mode="json")
+
+
+def create_employee(new_employee: EmployeeAddDTO, session: Session):
+    new_employee_orm = EmployeesORM(
+        full_name=new_employee.full_name,
+        phone=new_employee.phone,
+        birth_date=new_employee.birth_date,
+        position=new_employee.position,
+        work_address=new_employee.work_address,
+    )
+
+    session.add(new_employee_orm)
+    session.commit()
 
 
 def update_employee(current_employee: EmployeeDTO, session: Session):

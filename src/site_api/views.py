@@ -2,9 +2,19 @@ from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
 
+
+
+
 from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload, joinedload
 
+from datetime import datetime
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload, Session
+from src.errors import NoRecordError
+
+
+OPEN_ORDER_STATUS_ID = 1
 
 
 def get_branches_info():
@@ -17,7 +27,7 @@ def get_branches_info():
 
         orm_result = session.execute(query).all()
         return [BranchesGetDTO.model_validate(orm_record, from_attributes=True)
-                .dict() for orm_record in orm_result]
+                .model_dump() for orm_record in orm_result]
 
 
 def get_categories_info():
@@ -34,7 +44,7 @@ def get_categories_info():
 
         orm_result = session.execute(query).all()
         return [CategoriesGetDTO.model_validate(orm_record, from_attributes=True)
-                .dict() for orm_record in orm_result]
+                .model_dump() for orm_record in orm_result]
 
 
 def get_all_available_products_by_category():
@@ -85,9 +95,120 @@ def get_product_info_by_id(product_id):
             )
         )
 
+
         orm_result = session.execute(query).all()
         return ProductsFullInfoDTO.model_validate(orm_result[0], from_attributes=True).dict() if len(orm_result) == 1 else None
 
+def add_product_to_favorites(user_id: int, product_id: int, session: Session):
+        product = session.get(ProductsORM, {"id": product_id})
+        if product is None:
+            raise NoRecordError(f"Товар с id={product_id} не найден")
+
+        favorite_query = select(FavoriteProductsORM).where(
+            FavoriteProductsORM.user_id == user_id,
+            FavoriteProductsORM.product_id == product_id
+        )
+        favorite = session.execute(favorite_query).scalar_one_or_none()
+
+        if favorite is not None:
+            raise ValueError("Товар уже добавлен в избранное")
+
+        new_favorite = FavoriteProductsORM(
+            user_id=user_id,
+            product_id=product_id
+        )
+
+        session.add(new_favorite)
+        session.commit()
 
 
 
+
+def delete_product_from_favorites(user_id: int, product_id: int, session: Session):
+        favorite_query = select(FavoriteProductsORM).where(
+            FavoriteProductsORM.user_id == user_id,
+            FavoriteProductsORM.product_id == product_id
+        )
+        favorite = session.execute(favorite_query).scalar_one_or_none()
+
+        if favorite is None:
+            raise NoRecordError(
+                f"Товар с id={product_id} отсутствует в избранном у пользователя"
+            )
+
+        session.delete(favorite)
+        session.commit()
+
+
+def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
+        branch = session.get(BranchesORM, {"id": order_data.branch_id})
+        if branch is None:
+            raise NoRecordError(f"Филиал с id={order_data.branch_id} не найден")
+
+        if not branch.is_active_for_order:
+            raise ValueError("Указанный филиал недоступен для оформления заказа")
+
+        product_ids = [item.product_id for item in order_data.items]
+
+        products = session.execute(
+            select(ProductsORM).where(ProductsORM.id.in_(product_ids))
+        ).scalars().all()
+
+        products_map = {product.id: product for product in products}
+
+        missing_ids = [product_id for product_id in product_ids if product_id not in products_map]
+        if missing_ids:
+            raise NoRecordError({
+                "message": "Часть товаров не найдена",
+                "ids": missing_ids
+            })
+
+        unavailable_ids = [
+            product.id
+            for product in products
+            if not product.is_visible or not product.category.display_on_site
+        ]
+
+        if unavailable_ids:
+            raise ValueError({
+                "message": "Часть товаров недоступна для оформления заказа",
+                "ids": unavailable_ids
+            })
+
+        new_order = OrdersORM(
+            user_id=user_id,
+            phone=order_data.phone,
+            created_at=datetime.now(),
+            order_datetime=order_data.order_datetime,
+            branch_id=order_data.branch_id,
+            comment=order_data.comment,
+            status_id=OPEN_ORDER_STATUS_ID,
+            total_amount=0
+        )
+
+        session.add(new_order)
+        session.flush()
+
+        total_amount = 0
+
+        for item in order_data.items:
+            product = products_map[item.product_id]
+            item_total_price = product.sale_price * item.quantity
+            total_amount += item_total_price
+
+            new_order_item = OrderItemsORM(
+                order_id=new_order.id,
+                product_id=product.id,
+                quantity=item.quantity,
+                total_price=item_total_price
+            )
+            session.add(new_order_item)
+
+        new_order.total_amount = total_amount
+
+        session.commit()
+
+        return {
+            "message": "Заказ успешно создан",
+            "order_id": new_order.id
+        }

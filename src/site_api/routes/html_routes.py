@@ -32,10 +32,11 @@ def index(request: Request):
     tags=["</> HTML запросы сайта"],
     summary="Страница изделия на сатйе"
 )
-def product_page(request: Request, product_id: int = Path(gt=0)):
+def product_page(request: Request, product_id: int):
     branches = get_branches_info()
     categories = get_categories_info()
     product_info = get_product_info_by_id(product_id)
+
     return templates.TemplateResponse(
         request=request,
         name="product.html",
@@ -43,6 +44,14 @@ def product_page(request: Request, product_id: int = Path(gt=0)):
             "branches": branches,
             "categories": categories,
             "product": product_info,
+            "domain": settings.full_domain
+        }) if product_info is not None else templates.TemplateResponse(
+
+        request=request,
+        name="error_page.html",
+        context={
+            "branches": branches,
+            "categories": categories,
             "domain": settings.full_domain
         }
     )

@@ -2,8 +2,8 @@ from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
 
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy import select, and_
+from sqlalchemy.orm import selectinload, joinedload
 
 
 
@@ -64,7 +64,7 @@ def get_all_available_products_by_category():
 
 def get_product_info_by_id(product_id):
     with session_fabric() as session:
-        query = select(
+        query = query = select(
             ProductsORM.id,
             ProductsORM.name,
             ProductsORM.weight,
@@ -76,14 +76,17 @@ def get_product_info_by_id(product_id):
             ProductsORM.protein,
             ProductsORM.fat,
             ProductsORM.carbs,
-            CategoriesORM.category_name
-        ).select_from(ProductsORM).join(
-            CategoriesORM,
-            CategoriesORM.id == ProductsORM.category_id
-        ).where(ProductsORM.id == product_id)
+            CategoriesORM.category_name  #
+        ).select_from(ProductsORM).join(ProductsORM.category).where(
+            and_(
+                ProductsORM.id == product_id,
+                ProductsORM.is_visible == True,
+                CategoriesORM.display_on_site == True
+            )
+        )
 
-        orm_result = session.execute(query).one()
-        return ProductsFullInfoDTO.model_validate(orm_result, from_attributes=True).dict()
+        orm_result = session.execute(query).all()
+        return ProductsFullInfoDTO.model_validate(orm_result[0], from_attributes=True).dict() if len(orm_result) == 1 else None
 
 
 

@@ -37,6 +37,14 @@
   margin-bottom: 20px;
 }
 
+.error-h2 {
+    font-family: "Wix Madefor Text";
+    font-size: var(--h2-font-size);
+    margin: 20px;
+    text-align: center;
+    color: var(--dark-brown-color);
+}
+
 
 
 .wix-madefor-text {

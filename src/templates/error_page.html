@@ -1,0 +1,33 @@
+{% extends 'base_template.html' %}
+
+{% block page_title %}
+    <title>Изделие не найдено</title>
+{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/base_template_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/product_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/curtain_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+{% endblock %}
+
+
+{% block content %}
+    <h2 class="error-h2">Упс... Страница данного товара не найдена! Возможно он был удален или временно снят с продажи.</h2>
+{% endblock %}
+
+
+
+
+{% block page_windows %}
+    {% include '_add_product_window.html' %}
+    {% include '_shopping_cart.html' %}
+    {% include '_account.html' %}
+    {% include '_liked_products.html' %}
+{% endblock %}
+
+{% block page_js %}
+    <script type="module" src="{{ url_for('static', path='JS/error_page_init.js')}}"></script>
+{% endblock %}

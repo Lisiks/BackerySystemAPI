@@ -49,92 +49,98 @@ export class ShoppingCart {
         const likedProducts = JSON.parse(localStorage.getItem('likedProducts'));
 
         let allPrice = 0;
-        for(const productId in productCartData) {
+        Object.keys(productCartData).forEach(productId => {
             const productInfoObj = productInfoData[productId];
             const productCartInfoObj = productCartData[productId];
-            allPrice += productInfoObj.sale_price * productCartInfoObj.count;
 
-
-            const newProductInCartElement = document.createElement('div');
-            newProductInCartElement.classList.add('product-in-cart');
-            newProductInCartElement.id = `product-cart-position-${productId}`;
-
-            const productImageElement = document.createElement('img');
-            productImageElement.src = productInfoObj.image_irl;
-            newProductInCartElement.append(productImageElement);
-
-            const productInCartInfoElement = document.createElement('div');
-            productInCartInfoElement.classList.add('product-in-cart-info');
-
-            const productNamePElement = document.createElement('p');
-            productNamePElement.classList.add('product-name');
-            productNamePElement.textContent = productInfoObj.name;
-            productInCartInfoElement.append(productNamePElement);
-
-            const productWeightPElement = document.createElement('p');
-            productWeightPElement.classList.add('product-weight');
-            productWeightPElement.textContent = `${productInfoObj.weight} г`;
-            productInCartInfoElement.append(productWeightPElement);
-
-            const productPricePElement = document.createElement('p');
-            productPricePElement.classList.add('product-price');
-            productPricePElement.id = `product-cart-position-price-p-${productId}`;
-            productPricePElement.textContent = `${(productInfoObj.sale_price * productCartInfoObj.count).toFixed(2)} р`;
-            productInCartInfoElement.append(productPricePElement);
-
-            newProductInCartElement.append(productInCartInfoElement);
-
-
-            const productInCartCountPlaceElement = document.createElement('div');
-            productInCartCountPlaceElement.classList.add('product-in-cart-count');
-
-
-            const decrementButtonElement = document.createElement('button');
-            decrementButtonElement.textContent = '-';
-            decrementButtonElement.setAttribute('productId', productId);
-            decrementButtonElement.classList.add('decrement-position-cart-button');
-            productInCartCountPlaceElement.append(decrementButtonElement);
-
-            const productPositionCountElement = document.createElement('p');
-            productPositionCountElement.textContent = productCartInfoObj.count;
-            productPositionCountElement.id = `product-cart-position-count-p-${productId}`;
-            productInCartCountPlaceElement.append(productPositionCountElement);
-
-            const incrementButtonElement = document.createElement('button');
-            incrementButtonElement.textContent = '+';
-            incrementButtonElement.setAttribute('productId', productId);
-            incrementButtonElement.classList.add('increment-position-cart-button');
-            productInCartCountPlaceElement.append(incrementButtonElement);
-
-            newProductInCartElement.append(productInCartCountPlaceElement);
-
-            const productPositionChangeButtonsElement = document.createElement('div');
-            productPositionChangeButtonsElement.classList.add('product-in-cart-change-button');
-
-            const likePositionButtonElement = document.createElement('button');
-            likePositionButtonElement.classList.add('liked-position-button');
-            likePositionButtonElement.setAttribute('data-js-liked-button', '')
-            if (!likedProducts.includes(productId)) {
-                likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/liked_button_image.png)';
+            if (!productCartInfoObj) {
+                delete productCartData[productId]
             } else {
-                likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/active_liked_image.png)';
+                allPrice += productInfoObj.sale_price * productCartInfoObj.count;
+
+
+                const newProductInCartElement = document.createElement('div');
+                newProductInCartElement.classList.add('product-in-cart');
+                newProductInCartElement.id = `product-cart-position-${productId}`;
+
+                const productImageElement = document.createElement('img');
+                productImageElement.src = productInfoObj.image_irl;
+                newProductInCartElement.append(productImageElement);
+
+                const productInCartInfoElement = document.createElement('div');
+                productInCartInfoElement.classList.add('product-in-cart-info');
+
+                const productNamePElement = document.createElement('p');
+                productNamePElement.classList.add('product-name');
+                productNamePElement.textContent = productInfoObj.name;
+                productInCartInfoElement.append(productNamePElement);
+
+                const productWeightPElement = document.createElement('p');
+                productWeightPElement.classList.add('product-weight');
+                productWeightPElement.textContent = `${productInfoObj.weight} г`;
+                productInCartInfoElement.append(productWeightPElement);
+
+                const productPricePElement = document.createElement('p');
+                productPricePElement.classList.add('product-price');
+                productPricePElement.id = `product-cart-position-price-p-${productId}`;
+                productPricePElement.textContent = `${(productInfoObj.sale_price * productCartInfoObj.count).toFixed(2)} р`;
+                productInCartInfoElement.append(productPricePElement);
+
+                newProductInCartElement.append(productInCartInfoElement);
+
+
+                const productInCartCountPlaceElement = document.createElement('div');
+                productInCartCountPlaceElement.classList.add('product-in-cart-count');
+
+
+                const decrementButtonElement = document.createElement('button');
+                decrementButtonElement.textContent = '-';
+                decrementButtonElement.setAttribute('productId', productId);
+                decrementButtonElement.classList.add('decrement-position-cart-button');
+                productInCartCountPlaceElement.append(decrementButtonElement);
+
+                const productPositionCountElement = document.createElement('p');
+                productPositionCountElement.textContent = productCartInfoObj.count;
+                productPositionCountElement.id = `product-cart-position-count-p-${productId}`;
+                productInCartCountPlaceElement.append(productPositionCountElement);
+
+                const incrementButtonElement = document.createElement('button');
+                incrementButtonElement.textContent = '+';
+                incrementButtonElement.setAttribute('productId', productId);
+                incrementButtonElement.classList.add('increment-position-cart-button');
+                productInCartCountPlaceElement.append(incrementButtonElement);
+
+                newProductInCartElement.append(productInCartCountPlaceElement);
+
+                const productPositionChangeButtonsElement = document.createElement('div');
+                productPositionChangeButtonsElement.classList.add('product-in-cart-change-button');
+
+                const likePositionButtonElement = document.createElement('button');
+                likePositionButtonElement.classList.add('liked-position-button');
+                likePositionButtonElement.setAttribute('data-js-liked-button', '')
+                if (!likedProducts.includes(productId)) {
+                    likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/liked_button_image.png)';
+                } else {
+                    likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/active_liked_image.png)';
+                }
+    
+
+                likePositionButtonElement.setAttribute('productId', productId);
+                productPositionChangeButtonsElement.append(likePositionButtonElement);
+
+                const deletePositionButtonElement = document.createElement('button');
+                deletePositionButtonElement.classList.add('delete-position-button');
+                deletePositionButtonElement.setAttribute('productId', productId);
+                productPositionChangeButtonsElement.append(deletePositionButtonElement);
+
+                newProductInCartElement.append(productPositionChangeButtonsElement);
+
+                addingProductBlock.append(newProductInCartElement);
             }
- 
-
-            likePositionButtonElement.setAttribute('productId', productId);
-            productPositionChangeButtonsElement.append(likePositionButtonElement);
-
-            const deletePositionButtonElement = document.createElement('button');
-            deletePositionButtonElement.classList.add('delete-position-button');
-            deletePositionButtonElement.setAttribute('productId', productId);
-            productPositionChangeButtonsElement.append(deletePositionButtonElement);
-
-            newProductInCartElement.append(productPositionChangeButtonsElement);
-
-            addingProductBlock.append(newProductInCartElement);
-        }
+        })
         this.shoppingCartProductContainerElement.append(addingProductBlock);
         this.shoppingCartPticeP.textContent = `${allPrice.toFixed(2)} р`;
+        sessionStorage.setItem('productCart', JSON.stringify(productCartData));
     }
 
 

@@ -99,45 +99,6 @@ def get_product_info_by_id(product_id):
         orm_result = session.execute(query).all()
         return ProductsFullInfoDTO.model_validate(orm_result[0], from_attributes=True).dict() if len(orm_result) == 1 else None
 
-def add_product_to_favorites(user_id: int, product_id: int, session: Session):
-        product = session.get(ProductsORM, {"id": product_id})
-        if product is None:
-            raise NoRecordError(f"Товар с id={product_id} не найден")
-
-        favorite_query = select(FavoriteProductsORM).where(
-            FavoriteProductsORM.user_id == user_id,
-            FavoriteProductsORM.product_id == product_id
-        )
-        favorite = session.execute(favorite_query).scalar_one_or_none()
-
-        if favorite is not None:
-            raise ValueError("Товар уже добавлен в избранное")
-
-        new_favorite = FavoriteProductsORM(
-            user_id=user_id,
-            product_id=product_id
-        )
-
-        session.add(new_favorite)
-        session.commit()
-
-
-
-
-def delete_product_from_favorites(user_id: int, product_id: int, session: Session):
-        favorite_query = select(FavoriteProductsORM).where(
-            FavoriteProductsORM.user_id == user_id,
-            FavoriteProductsORM.product_id == product_id
-        )
-        favorite = session.execute(favorite_query).scalar_one_or_none()
-
-        if favorite is None:
-            raise NoRecordError(
-                f"Товар с id={product_id} отсутствует в избранном у пользователя"
-            )
-
-        session.delete(favorite)
-        session.commit()
 
 
 def create_order(user_id: int, order_data: OrderAddDTO, session: Session):

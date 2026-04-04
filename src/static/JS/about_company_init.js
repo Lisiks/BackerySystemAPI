@@ -1,11 +1,17 @@
 import { loadProducts } from "./server_queries.js";
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
+import { LikedProductCirtain } from "./liked_products_module.js"
+import { AddProductWindow } from "./add_product_module.js"
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
+    const likedProductsModalWindow = new LikedProductCirtain();
+    const addingProductModalWindow = new AddProductWindow();
+
     const openProductCartBtn = document.getElementById('shopping-cart-button');
+    const openLikedProductsBtn = document.getElementById('liked-products-button');
 
     const nextPhotoSliderBtnElement = document.getElementById('next-slider-button');
     const lastPhotoSliderBtnElement = document.getElementById('last-slider-button');
@@ -19,6 +25,10 @@ async function initPage() {
         sessionStorage.setItem('productCart', JSON.stringify({}));
     }
 
+    if (localStorage.getItem('likedProducts') === null) {
+        localStorage.setItem('likedProducts', JSON.stringify([]));
+    }
+
     const newProductInfoObject = {};
     if (sessionStorage.getItem('productInfo') === null) {
         const productsInfo = await loadProducts();
@@ -30,17 +40,16 @@ async function initPage() {
         sessionStorage.setItem('productInfo', JSON.stringify(newProductInfoObject));
     }
 
-
-    document.addEventListener('click', (event) => {
-        if (event.target === openProductCartBtn) {
-            shoppingCartModalWindow.openProductCart();
-        }
-
+    openProductCartBtn.addEventListener('click', () => {
+        shoppingCartModalWindow.openProductCart();
+    });
+    
+    openLikedProductsBtn.addEventListener('click', () => {
+        likedProductsModalWindow.openWindow();
     });
 
     nextPhotoSliderBtnElement.addEventListener('click', () => {
         currentSliderImg = currentSliderImg === imageArray.length - 1 ? 0 : currentSliderImg + 1;
-        console.log(imageArray[currentSliderImg]);
         sliderImgElement.src = imageArray[currentSliderImg];
     });
 
@@ -48,6 +57,19 @@ async function initPage() {
         currentSliderImg = currentSliderImg === 0 ? imageArray.length - 1 : currentSliderImg - 1;
         sliderImgElement.src = imageArray[currentSliderImg];
     });
+
+    document.addEventListener('click', (event) => {   
+        if (event.target.hasAttribute('data-js-in-cart-button')) {
+            const currentProductId = event.target.getAttribute('productId');    
+            addingProductModalWindow.openWindow(currentProductId);
+        }
+        else if (event.target.hasAttribute('data-js-liked-button')) {
+            const productId = event.target.getAttribute('productId');
+            likedProductsModalWindow.setLikedPosition(event.target, productId);
+        }
+    });
+
+    
 }
 
 initPage();

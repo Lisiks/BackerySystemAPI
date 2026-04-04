@@ -2,17 +2,25 @@ import { loadProducts } from "./server_queries.js";
 import { AddProductWindow } from "./add_product_module.js"
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
+import { LikedProductCirtain } from "./liked_products_module.js"
 
 async function pageInit() {
 
     const exitAcciuntWindow = new UserAccountExitWindow();
     const addingProductModalWindow = new AddProductWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
+    const likedProductsModalWindow = new LikedProductCirtain();
+
     const openProductCartBtn = document.getElementById('shopping-cart-button');
+    const openLikedProductsBtn = document.getElementById('liked-products-button');
 
 
     if (sessionStorage.getItem('productCart') === null) {
         sessionStorage.setItem('productCart', JSON.stringify({}));
+    }
+
+    if (localStorage.getItem('likedProducts') === null) {
+        localStorage.setItem('likedProducts', JSON.stringify([]));
     }
 
     const productsInfo = await loadProducts();
@@ -30,7 +38,7 @@ async function pageInit() {
 
             const newProductCardElement = document.createElement('div');
             newProductCardElement.classList.add('product-card');
-            newProductCardElement.productId = productId;
+            newProductCardElement.setAttribute('productId', productId);
 
             const imageElement = document.createElement('img');
             imageElement.src = productInfoObj.image_irl;
@@ -56,7 +64,8 @@ async function pageInit() {
             const inCartButtonElement = document.createElement('button');
             inCartButtonElement.textContent = 'В корзину';
             inCartButtonElement.classList.add('in-cart-button');
-            inCartButtonElement.productId = productId;
+            inCartButtonElement.setAttribute('productId', productId);
+            inCartButtonElement.setAttribute('data-js-in-cart-button', '')
             newProductCardElement.append(inCartButtonElement);
 
 
@@ -68,19 +77,30 @@ async function pageInit() {
     }
     sessionStorage.setItem("productInfo", JSON.stringify(newProductInfoObject));
     
-    
 
+
+    openProductCartBtn.addEventListener('click', () => {
+        shoppingCartModalWindow.openProductCart();
+    });
+    
+    openLikedProductsBtn.addEventListener('click', () => {
+        likedProductsModalWindow.openWindow();
+    });
+
+    
     document.addEventListener('click', (event) => {
         const currentProductCardElement = event.target.closest('.product-card');
 
-        if (event.target.classList.contains('in-cart-button')) {
-            const currentProductId = event.target.productId;    
+
+        if (event.target.hasAttribute('data-js-in-cart-button')) {
+            const currentProductId = event.target.getAttribute('productId');    
             addingProductModalWindow.openWindow(currentProductId);
         } else if (currentProductCardElement) {
-            const currentProductId = currentProductCardElement.productId;
+            const currentProductId = currentProductCardElement.getAttribute('productId');
             window.location.href = `${window.location.origin}/site/catalog/${currentProductId}`;
-        } else if (event.target === openProductCartBtn) {
-            shoppingCartModalWindow.openProductCart();
+        }  else if (event.target.hasAttribute('data-js-liked-button')) {
+            const productId = event.target.getAttribute('productId');
+            likedProductsModalWindow.setLikedPosition(event.target, productId);
         }
     });
 }

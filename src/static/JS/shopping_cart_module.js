@@ -6,26 +6,37 @@ export class ShoppingCart {
         this.closeCartButtonElement = document.getElementById("close-cart-button");
         this.makeOrderBtnElement = document.getElementById('shoping-cart-order-button');
         this.userAccountWindowObj = userAccountWindowObj;
+
+  
         
 
+        this.closeCartButtonElement.addEventListener('click', () => {
+            this.closeProductCart();
+        })
+
+        this.makeOrderBtnElement.addEventListener('click', () => {
+            this.makeOrder();
+        })
 
         document.addEventListener('click', (event) => {
-            if (event.target === this.closeCartButtonElement || event.target === this.shoppingCartWindowElement) {
-                this.shoppingCartWindowElement.style.display = 'none';
-                this.shoppingCartProductContainerElement.replaceChildren();
+            if (event.target === this.shoppingCartWindowElement) {
+                this.closeProductCart();
             } else if (event.target.classList.contains('increment-position-cart-button')) {
-                const currentProductId = event.target.productid;
+                const currentProductId = event.target.getAttribute('productId');
                 this.incrementCartPosition(currentProductId);
             } else if (event.target.classList.contains('decrement-position-cart-button')) {
-                const currentProductId = event.target.productid;
+                const currentProductId = event.target.getAttribute('productId');
                 this.decrementCartPosition(currentProductId);
             } else if (event.target.classList.contains('delete-position-button')) {
-                const currentProductId = event.target.productid;
+                const currentProductId = event.target.getAttribute('productId');
                 this.deleteCartPosition(currentProductId);
-            } else if (event.target === this.makeOrderBtnElement) {
-                this.makeOrder();
-            }
+            } 
         });
+    }
+
+    closeProductCart() {
+        this.shoppingCartWindowElement.style.display = 'none';
+        this.shoppingCartProductContainerElement.replaceChildren();
     }
 
 
@@ -35,6 +46,7 @@ export class ShoppingCart {
         const productCartData = JSON.parse(sessionStorage.getItem('productCart'));
         const productInfoData = JSON.parse(sessionStorage.getItem('productInfo'));
         const addingProductBlock = document.createDocumentFragment();
+        const likedProducts = JSON.parse(localStorage.getItem('likedProducts'));
 
         let allPrice = 0;
         for(const productId in productCartData) {
@@ -79,7 +91,7 @@ export class ShoppingCart {
 
             const decrementButtonElement = document.createElement('button');
             decrementButtonElement.textContent = '-';
-            decrementButtonElement.productid = productId;
+            decrementButtonElement.setAttribute('productId', productId);
             decrementButtonElement.classList.add('decrement-position-cart-button');
             productInCartCountPlaceElement.append(decrementButtonElement);
 
@@ -90,7 +102,7 @@ export class ShoppingCart {
 
             const incrementButtonElement = document.createElement('button');
             incrementButtonElement.textContent = '+';
-            incrementButtonElement.productid = productId;
+            incrementButtonElement.setAttribute('productId', productId);
             incrementButtonElement.classList.add('increment-position-cart-button');
             productInCartCountPlaceElement.append(incrementButtonElement);
 
@@ -101,11 +113,20 @@ export class ShoppingCart {
 
             const likePositionButtonElement = document.createElement('button');
             likePositionButtonElement.classList.add('liked-position-button');
+            likePositionButtonElement.setAttribute('data-js-liked-button', '')
+            if (!likedProducts.includes(productId)) {
+                likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/liked_button_image.png)';
+            } else {
+                likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/active_liked_image.png)';
+            }
+ 
+
+            likePositionButtonElement.setAttribute('productId', productId);
             productPositionChangeButtonsElement.append(likePositionButtonElement);
 
             const deletePositionButtonElement = document.createElement('button');
             deletePositionButtonElement.classList.add('delete-position-button');
-            deletePositionButtonElement.productid = productId;
+            deletePositionButtonElement.setAttribute('productId', productId);
             productPositionChangeButtonsElement.append(deletePositionButtonElement);
 
             newProductInCartElement.append(productPositionChangeButtonsElement);

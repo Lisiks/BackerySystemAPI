@@ -2,15 +2,33 @@ import { loadProducts } from "./server_queries.js";
 import { AddProductWindow } from "./add_product_module.js"
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
+import { LikedProductCirtain } from "./liked_products_module.js"
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
     const addingProductModalWindow = new AddProductWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
+    const likedProductsModalWindow = new LikedProductCirtain();
+
     const openProductCartBtn = document.getElementById('shopping-cart-button');
+    const openLikedProductsBtn = document.getElementById('liked-products-button');
+    const likeProductBtnElement = document.getElementById('liked-button');
+
+    const productId = window.location.href.split('/').pop();
+    const likerProducts = JSON.parse(localStorage.getItem('likedProducts'));
+    if (!likerProducts.includes(productId)) {
+        likeProductBtnElement.style.backgroundImage = 'url(/static/StaticImages/liked_button_image.png)'
+    } else {
+        likeProductBtnElement.style.backgroundImage = 'url(/static/StaticImages/active_liked_image.png)';
+    }
+
 
     if (sessionStorage.getItem('productCart') === null) {
         sessionStorage.setItem('productCart', JSON.stringify({}));
+    }
+
+    if (localStorage.getItem('likedProducts') === null) {
+        localStorage.setItem('likedProducts', JSON.stringify([]));
     }
 
     const newProductInfoObject = {};
@@ -24,15 +42,28 @@ async function initPage() {
         sessionStorage.setItem('productInfo', JSON.stringify(newProductInfoObject));
     }
 
+    openProductCartBtn.addEventListener('click', () => {
+        shoppingCartModalWindow.openProductCart();
+    });
+    
+    openLikedProductsBtn.addEventListener('click', () => {
+        likedProductsModalWindow.openWindow();
+    });
 
     document.addEventListener('click', (event) => {   
-        if (event.target === openProductCartBtn) {
-            shoppingCartModalWindow.openProductCart();
-        } else if (event.target.classList.contains('in-cart-button')) {
+        if (event.target.hasAttribute('data-js-in-cart-button')) {
             const currentProductId = event.target.getAttribute('productId');    
             addingProductModalWindow.openWindow(currentProductId);
         }
-  
+        else if (event.target.hasAttribute('data-js-liked-button')) {
+            const productId = event.target.getAttribute('productId');
+            likedProductsModalWindow.setLikedPosition(event.target, productId);
+         
+            if (event.target !== likeProductBtnElement) {
+                console.log(1);
+                likeProductBtnElement.style.backgroundImage = event.target.style.backgroundImage;
+            }
+        }
     });
 }
 

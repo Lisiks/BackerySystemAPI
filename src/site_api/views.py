@@ -23,7 +23,7 @@ def get_branches_info():
             BranchesORM.id,
             BranchesORM.branches_address,
             BranchesORM.branches_phone
-        ).select_from(BranchesORM)
+        ).select_from(BranchesORM).where(BranchesORM.is_active_for_order == True)
 
         orm_result = session.execute(query).all()
         return [BranchesGetDTO.model_validate(orm_record, from_attributes=True)
@@ -70,6 +70,7 @@ def get_all_available_products_by_category():
                     "image_irl": dto_record.image_url
                 }
         return result
+
 
 
 def get_product_info_by_id(product_id):
@@ -138,6 +139,7 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
 
         new_order = OrdersORM(
             user_id=user_id,
+            username=order_data.username,
             phone=order_data.phone,
             created_at=datetime.now(),
             order_datetime=order_data.order_datetime,

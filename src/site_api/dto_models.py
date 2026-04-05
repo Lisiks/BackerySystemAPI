@@ -44,6 +44,7 @@ class OrderItemAddDTO(BaseModel):
 
 
 class OrderAddDTO(BaseModel):
+    username: str = Field(max_length=50)
     phone: str = Field(min_length=5, max_length=30)
     items: list[OrderItemAddDTO] = Field(min_length=1)
     order_datetime: datetime

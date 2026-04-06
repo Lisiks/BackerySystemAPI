@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddAndUpdateDTO,
                                                 AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO)
-from src.database.orm_models import EmployeesORM
+from src.database.orm_models import EmployeesORM, BranchesORM
 from src.errors import NoRecordError
 
 
@@ -51,8 +51,7 @@ def authenticate_employee(
 
     return AuthenticateEmployeeResponseDTO(
         message="Успешная авторизация",
-        employee_id=employee.id,
-        branch_id=employee.branch_id,
+        employee_id=employee.id
     )
 
 
@@ -61,10 +60,26 @@ def get_all_employees(session: Session):
         select(EmployeesORM).order_by(EmployeesORM.id.asc())
     ).scalars().all()
 
-    return [
-        EmployeeDTO.model_validate(employee, from_attributes=True).model_dump(mode="json")
-        for employee in orm_result
-    ]
+    result = []
+
+    for employee in orm_result:
+        branch = session.get(BranchesORM, employee.branch_id)
+        if branch is None:
+            raise NoRecordError(f"No branch with id={employee.branch_id}")
+
+        result.append(
+            EmployeeDTO(
+                id=employee.id,
+                full_name=employee.full_name,
+                phone=employee.phone,
+                position=employee.position,
+                username=employee.username,
+                branch_id=employee.branch_id,
+                work_address=str(branch.branches_address),
+            ).model_dump(mode="json")
+        )
+
+    return result
 
 
 def get_employee(employee_id: int, session: Session):
@@ -72,16 +87,28 @@ def get_employee(employee_id: int, session: Session):
     if employee is None:
         raise NoRecordError(f"No employee with id={employee_id}")
 
-    return EmployeeDTO.model_validate(employee, from_attributes=True).model_dump(mode="json")
+    branch = session.get(BranchesORM, employee.branch_id)
+    if branch is None:
+        raise NoRecordError(f"No branch with id={employee.branch_id}")
 
+    employee_id_value = getattr(employee, "id")
+    branch_id_value = getattr(employee, "branch_id")
+
+    return EmployeeDTO(
+        id=employee_id_value,
+        full_name=str(employee.full_name),
+        phone=str(employee.phone),
+        position=str(employee.position),
+        username=str(employee.username),
+        branch_id=branch_id_value,
+        work_address=str(branch.branches_address),
+    ).model_dump(mode="json")
 
 def create_employee(new_employee: EmployeeAddAndUpdateDTO, session: Session):
     new_employee_orm = EmployeesORM(
         full_name=new_employee.full_name,
         phone=new_employee.phone,
-        birth_date=new_employee.birth_date,
         position=new_employee.position,
-        work_address=new_employee.work_address,
         username=new_employee.username,
         password_hash=hash_employee_password(new_employee.password),
         branch_id=new_employee.branch_id,
@@ -98,10 +125,9 @@ def update_employee(employee_id: int, current_employee: EmployeeAddAndUpdateDTO,
 
     employee.full_name = current_employee.full_name
     employee.phone = current_employee.phone
-    employee.birth_date = current_employee.birth_date
     employee.position = current_employee.position
-    employee.work_address = current_employee.work_address
     employee.username = current_employee.username
+    employee.password_hash=hash_employee_password(current_employee.password)
     employee.branch_id = current_employee.branch_id
 
     session.commit()

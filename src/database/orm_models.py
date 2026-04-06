@@ -1,7 +1,7 @@
 from src.database.database import Base
-from datetime import datetime, date
+from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, Boolean, Date, DateTime, Text
+from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text
 
 
 
@@ -147,9 +147,7 @@ class EmployeesORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     phone: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
-    birth_date: Mapped[date] = mapped_column(Date, nullable=False)
     position: Mapped[str] = mapped_column(String(100), nullable=False)
-    work_address: Mapped[str] = mapped_column(String(255), nullable=False)
     username: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     branch_id: Mapped[int] = mapped_column(

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, UploadFile, File, Form, Depends
+from fastapi import APIRouter, status, UploadFile, File, Form, Depends, HTTPException
 from fastapi.responses import JSONResponse
 
 from sqlalchemy.exc import IntegrityError
@@ -7,9 +7,10 @@ from sqlalchemy.orm import Session
 from src.errors import NoRecordError
 from src.database.database import session_fabric
 from src.admin_api.orders.views import get_user_orders
-from src.admin_api.employees.dto_models import EmployeeDTO,  EmployeeAddDTO
+from src.admin_api.employees.dto_models import ( EmployeeAddAndUpdateDTO, AuthenticateEmployeeRequestDTO,
+                                           AuthenticateEmployeeResponseDTO)
 from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
-                                           delete_employee)
+                                           delete_employee, authenticate_employee)
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -277,7 +278,6 @@ def put_product(
         )
 
 
-
 @admin_route.get(
     path="/users/{user_id}/orders",
     tags=["Заказы🧾"],
@@ -347,14 +347,41 @@ def get_employee_route(
 
 
 @admin_route.post(
+    path="/employees/authenticate",
+    tags=["Сотрудники👥"],
+    name="Аутентификация сотрудника",
+    summary="При помощи данного запроса должна производиться аутентификация сотрудника по логину и паролю "
+            "в административном приложении.",
+    response_model=AuthenticateEmployeeResponseDTO,
+    response_class=JSONResponse
+)
+def authenticate_employee_route(
+    data: AuthenticateEmployeeRequestDTO,
+    session: Session = Depends(get_db),
+):
+    try:
+        result = authenticate_employee(data, session)
+        return JSONResponse(
+            content=result.model_dump(),
+            status_code=status.HTTP_200_OK
+        )
+    except HTTPException as e:
+        return JSONResponse(
+            content={"message": e.detail},
+            status_code=e.status_code
+        )
+
+
+@admin_route.post(
     path="/employees/add",
     tags=["Сотрудники👥"],
     name="Добавить сотрудника",
-    summary="Данный запрос предназначен для создания сотрудника на основании данных из административного приложения.",
+    summary="При помощи данного запроса должно производиться создание записи о сотруднике на основании данных"
+            " из административного приложения.",
     response_class=JSONResponse
 )
 def post_employee(
-    new_employee: EmployeeAddDTO,
+    new_employee: EmployeeAddAndUpdateDTO,
     session: Session = Depends(get_db),
 ):
     try:
@@ -371,19 +398,20 @@ def post_employee(
 
 
 @admin_route.put(
-    path="/employees/update",
+    path="/employees/update/{employee_id}",
     tags=["Сотрудники👥"],
     name="Изменить сотрудника",
-    summary="При помощи данного запроса должно производиться изменение сотрудника "
-            "на основе поступивших из административного приложения данных.",
+    summary="При помощи данного запроса должно производиться изменение сотрудника на основании поступивших данных"
+            " из административного приложения.",
     response_class=JSONResponse
 )
 def put_employee(
-    current_employee: EmployeeDTO,
+    employee_id: int,
+    current_employee: EmployeeAddAndUpdateDTO,
     session: Session = Depends(get_db),
 ):
     try:
-        update_employee(current_employee, session)
+        update_employee(employee_id, current_employee, session)
         return JSONResponse(
             content={"message": "ok"},
             status_code=status.HTTP_200_OK

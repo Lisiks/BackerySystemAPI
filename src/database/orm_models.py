@@ -150,3 +150,9 @@ class EmployeesORM(Base):
     birth_date: Mapped[date] = mapped_column(Date, nullable=False)
     position: Mapped[str] = mapped_column(String(100), nullable=False)
     work_address: Mapped[str] = mapped_column(String(255), nullable=False)
+    username: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    branch_id: Mapped[int] = mapped_column(
+        ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False
+    )

@@ -13,8 +13,10 @@
 {% endblock %}
 
 
+
+
 {% block content %}
-    <div id="content">
+    <div class="content">
     {% for category in categories %}
         <div id="{{'category-' + category['id'] | string }}" class="category-block">
             <h2>{{ category['category_name'] }}</h2>

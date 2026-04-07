@@ -1,3 +1,7 @@
+.content {
+    margin: 20px 10vw;
+}
+
 .menu_item_title {
     font-family: "Istok Web";
     font-size: 96px;
@@ -8,7 +12,6 @@
 }
 
 #h2-header {
-    margin: 20px 0px;
     font-family: "Istok Web";
     font-size: var(--h2-font-size);
     color: var(--dark-brown-color);
@@ -20,8 +23,6 @@
     font-family: "Istok Web";
     font-variant: small-caps;
     font-size: var(--normal-font-size);
-    margin-left: 200px;
-    margin-right: 200px;
 }
 
 .custom-details summary {
@@ -76,6 +77,4 @@
     font-family: "Wix Madefor Text";
     font-size: var(--small-font-size);
     margin-top: 10px;
-    margin-left: 200px;
-    margin-right: 200px;
 }

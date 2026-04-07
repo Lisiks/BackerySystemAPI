@@ -30,7 +30,7 @@
 
         <div id="header-menu-section">
             {% for category in categories %}
-                <a target="_self" href="{{domain + 'site/catalog/' + '#category-' + category['id'] | string }}">{{category['category_name']}}</a>
+                <a target="_self" href="{{domain + 'site/catalog' + '#category-' + category['id'] | string }}">{{category['category_name']}}</a>
             {% endfor %}
             <a target="_self" href="{{domain + 'site/about/'}}">О компании</a>
             <a target="_self" href="{{domain + 'site/faq/'}}">FAQ</a>

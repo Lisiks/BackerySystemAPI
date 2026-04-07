@@ -207,14 +207,7 @@ export class ShoppingCart {
             return;
         }
 
-        const accessTokenJWT = localStorage.getItem('bearer');
-
-
-        if (accessTokenJWT === null) {
-            this.shoppingCartWindowElement.style.display = 'none';
-            this.shoppingCartProductContainerElement.replaceChildren();
-            this.userAccountWindowObj.showAccountExitForm();
-        }
+        window.location.href = `${window.location.origin}/site/new_order`;
     }
 
 }

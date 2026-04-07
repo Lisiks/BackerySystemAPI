@@ -1,19 +1,33 @@
-from fastapi import APIRouter, status, UploadFile, File, Form, Path
+from fastapi import APIRouter, status, UploadFile, File, Form, Depends, HTTPException, Path
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import IntegrityError
-from src.errors import NoRecordError
 
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from src.errors import NoRecordError
+from src.database.database import session_fabric
+from src.admin_api.orders.views import *
+from src.admin_api.employees.dto_models import ( EmployeeAddAndUpdateDTO, AuthenticateEmployeeRequestDTO,
+                                           AuthenticateEmployeeResponseDTO)
+from src.admin_api.orders.dto_models import OrderStatusChangeModel
+from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
+                                           delete_employee, authenticate_employee)
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
 from src.admin_api.categories.dto_models import CategoriesDTO, CategoriesAddDTO
-from src.admin_api.orders.views import *
-from src.admin_api.orders.dto_model import OrderStatusChangeModel
-
 from src.admin_api.products.views import create_product, update_product, get_all_products
 from src.admin_api.products.dto_models import ProductsAddDTO, ProductsUpdateDTO
 
 admin_route = APIRouter(prefix="/admin")
+
+
+def get_db():
+    session = session_fabric()
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 @admin_route.get(
@@ -294,3 +308,176 @@ def change_order_status_route(change_order_data: OrderStatusChangeModel):
         return JSONResponse(content={"message": f"{e.args[0]}"}, status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 
+@admin_route.get(
+    path="/users/{user_id}/orders",
+    tags=["Заказы🧾"],
+    name="Получить заказы пользователя",
+    summary="При помощи данного запроса должно производиться получение всех заказов конкретного пользователя "
+            "для административного приложения.",
+    response_class=JSONResponse
+)
+def get_user_orders_route(
+    user_id: int,
+    session: Session = Depends(get_db),
+):
+    try:
+        orders = get_user_orders(user_id, session)
+        return JSONResponse(
+            content={"orders": orders},
+            status_code=status.HTTP_200_OK
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@admin_route.get(
+    path="/employees",
+    tags=["Сотрудники👥"],
+    name="Получить данные обо всех сотрудниках",
+    summary="При помощи данного запроса должно производиться получение данных обо всех сотрудниках "
+            "для административного приложения.",
+    response_class=JSONResponse
+)
+def get_employees(
+    session: Session = Depends(get_db),
+):
+    employees = get_all_employees(session)
+    return JSONResponse(
+        content={"employees": employees},
+        status_code=status.HTTP_200_OK
+    )
+
+
+@admin_route.get(
+    path="/employees/{employee_id}",
+    tags=["Сотрудники👥"],
+    name="Получить данные о сотруднике",
+    summary="При помощи данного запроса должно производиться получение данных "
+            "о конкретном сотруднике для административного приложения.",
+    response_class=JSONResponse
+)
+def get_employee_route(
+    employee_id: int,
+    session: Session = Depends(get_db),
+):
+    try:
+        employee = get_employee(employee_id, session)
+        return JSONResponse(
+            content={"employee": employee},
+            status_code=status.HTTP_200_OK
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@admin_route.post(
+    path="/employees/authenticate",
+    tags=["Сотрудники👥"],
+    name="Аутентификация сотрудника",
+    summary="При помощи данного запроса должна производиться аутентификация сотрудника по логину и паролю "
+            "в административном приложении.",
+    response_model=AuthenticateEmployeeResponseDTO,
+    response_class=JSONResponse
+)
+def authenticate_employee_route(
+    data: AuthenticateEmployeeRequestDTO,
+    session: Session = Depends(get_db),
+):
+    try:
+        result = authenticate_employee(data, session)
+        return JSONResponse(
+            content=result.model_dump(),
+            status_code=status.HTTP_200_OK
+        )
+    except HTTPException as e:
+        return JSONResponse(
+            content={"message": e.detail},
+            status_code=e.status_code
+        )
+
+
+@admin_route.post(
+    path="/employees/add",
+    tags=["Сотрудники👥"],
+    name="Добавить сотрудника",
+    summary="При помощи данного запроса должно производиться создание записи о сотруднике на основании данных"
+            " из административного приложения.",
+    response_class=JSONResponse
+)
+def post_employee(
+    new_employee: EmployeeAddAndUpdateDTO,
+    session: Session = Depends(get_db),
+):
+    try:
+        create_employee(new_employee, session)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_200_OK
+        )
+    except IntegrityError as e:
+        return JSONResponse(
+            content={"message": "Integrity error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@admin_route.put(
+    path="/employees/update/{employee_id}",
+    tags=["Сотрудники👥"],
+    name="Изменить сотрудника",
+    summary="При помощи данного запроса должно производиться изменение сотрудника на основании поступивших данных"
+            " из административного приложения.",
+    response_class=JSONResponse
+)
+def put_employee(
+    employee_id: int,
+    current_employee: EmployeeAddAndUpdateDTO,
+    session: Session = Depends(get_db),
+):
+    try:
+        update_employee(employee_id, current_employee, session)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_200_OK
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+    except IntegrityError as e:
+        return JSONResponse(
+            content={"message": "Integrity error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@admin_route.delete(
+    path="/employees/delete/{employee_id}",
+    tags=["Сотрудники👥"],
+    name="Удалить сотрудника",
+    summary="При помощи данного запроса должно производиться удаление сотрудника "
+            "по его id для административного приложения.",
+    response_class=JSONResponse
+)
+def delete_employee_route(
+    employee_id: int,
+    session: Session = Depends(get_db),
+):
+    try:
+        delete_employee(employee_id, session)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_200_OK
+        )
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "No record error", "description": e.args},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )

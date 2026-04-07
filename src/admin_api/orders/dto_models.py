@@ -9,6 +9,11 @@ class OrderItemAdminDTO(BaseModel):
     total_price: float = Field(ge=0)
 
 
+class OrderStatusChangeModel(BaseModel):
+    order_id: int = Field(gt=0)
+    status_id: int = Field(gt=0, lt=6)
+
+
 class UserOrderAdminDTO(BaseModel):
     id: int = Field(gt=0)
     user_id: int = Field(gt=0)

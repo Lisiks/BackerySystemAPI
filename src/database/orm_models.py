@@ -1,8 +1,10 @@
-from src.database.database import Base
+#from src.database.database import Base
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
+from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text, create_engine
 
+class Base(DeclarativeBase):
+    pass
 
 
 class BranchesORM(Base):
@@ -167,3 +169,10 @@ class EmployeesORM(Base):
         nullable=False
     )
 
+
+# Добавлять отдельно
+
+# engine = create_engine(DATABASE_URL, echo=True)
+
+# # Вариант 1: Создать только employees
+# Base.metadata.create_all(engine, tables=[EmployeesORM.__table__])

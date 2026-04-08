@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 
-from passlib.context import CryptContext
+import bcrypt
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -11,22 +11,22 @@ from src.database.orm_models import EmployeesORM, BranchesORM
 from src.errors import NoRecordError
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
 def hash_employee_password(password: str) -> str:
     if len(password.encode("utf-8")) > 72:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Пароль не должен быть длиннее 72 байт",
         )
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_employee_password(plain_password: str, password_hash: str) -> bool:
     if len(plain_password.encode("utf-8")) > 72:
         return False
-    return pwd_context.verify(plain_password, password_hash)
+    return bcrypt.checkpw(
+        plain_password.encode('utf-8'),
+        password_hash.encode('utf-8') if isinstance(password_hash, str) else password_hash
+    )
 
 
 def authenticate_employee(

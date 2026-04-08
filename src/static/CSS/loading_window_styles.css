@@ -1,0 +1,124 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}   
+
+body {
+    min-height: 100vh;
+}
+
+#loading-bg {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 20;
+    height: 100vh;
+    width: 100vw;
+
+    background-color: rgba(0, 0, 0, 0.35);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes loading {
+    0% {
+        border-top: 20px solid white;
+        border-right: 20px solid white;
+        border-bottom: 20px solid white;
+        border-left: 20px solid white;
+        transform: rotate(360deg);
+    }
+    12.5% {
+        border-top: 20px solid white;
+        border-right: 20px solid white;
+        border-bottom: 20px solid white;
+        border-left: 20px solid transparent;
+    }
+    25% {
+        border-top: 20px solid white;
+        border-right: 20px solid white;
+        border-bottom: 20px solid transparent;
+        border-left: 20px solid transparent;
+    }
+    37.5% {
+        border-top: 20px solid white;
+        border-right: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-left: 20px solid transparent;
+    }
+    50% {
+        border-top: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-left: 20px solid transparent;
+    }
+    62.5% {
+        border-top: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-left: 20px solid white;
+    }
+    75% {
+        border-top: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 20px solid white;
+        border-left: 20px solid white;
+    }
+    87.5% {
+        border-top: 20px solid transparent;
+        border-right: 20px solid white;
+        border-bottom: 20px solid white;
+        border-left: 20px solid white;
+    }
+    100% {
+        border-top: 20px solid white;
+        border-right: 20px solid white;
+        border-bottom: 20px solid white;
+        border-left: 20px solid white;
+    }
+    
+    
+}
+
+
+.rotating-circle {
+    background-color: transparent;
+    border: 20px solid white;
+    border-radius: 50%;
+
+    animation-name: loading;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+#circle1 {
+    width: 300px;
+    height: 300px;
+    animation-duration: 2s;
+    
+}
+
+#circle2 {
+    width: 200px;
+    height: 200px;
+    animation-duration: 1.8s;
+    
+}
+
+#circle3 {
+    width: 100px;
+    height: 100px;
+    animation-duration: 1.6s;
+    
+}
+
+

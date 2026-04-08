@@ -1,12 +1,12 @@
 {% extends 'base_template.html' %}
 
 {% block page_title %}
-    <title>Пекарня 67 вкусов: Каталог</title>
+    <title>Изделие не найдено</title>
 {% endblock %}
 
 {% block page_css %}
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/base_template_styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='CSS/index_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/product_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/curtain_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
@@ -15,20 +15,9 @@
 {% endblock %}
 
 
-
-
 {% block content %}
-    <div class="content">
-    {% for category in categories %}
-        <div id="{{'category-' + category['id'] | string }}" class="category-block">
-            <h2>{{ category['category_name'] }}</h2>
-            <div class="product-container"></div>
-        </div>
-    {% endfor %}
-    </div>
+    <h2 class="error-h2">Ваш заказ успешно создан. Вы можете просмотреть его в профиле.</h2>
 {% endblock %}
-
-
 
 {% block page_windows %}
     {% include '_add_product_window.html' %}
@@ -38,5 +27,5 @@
 {% endblock %}
 
 {% block page_js %}
-    <script type="module" src="{{ url_for('static', path='JS/index_init.js')}}"></script>
+    <script type="module" src="{{ url_for('static', path='JS/error_page_init.js')}}"></script>
 {% endblock %}

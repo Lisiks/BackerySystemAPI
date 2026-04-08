@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/order_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
 {% endblock %}
 
 
@@ -19,8 +20,18 @@
 
         <p class="error-p" id="error-user-name" style="display: none;"></p>
         <input type="text" placeholder="Имя пользователя" maxlength="50" id="order-name" readonly onfocus="this.removeAttribute('readonly')">
+
         <p class="error-p" id="error-user-phone" style="display: none;"></p>
-        <input type="tel" placeholder="Номер телефона пользователя" maxlength="20" id="order-phone" readonly onfocus="this.removeAttribute('readonly')">
+        <div id="user-phone-container">
+            <select id="order-phone-country-code">
+                <option value="+7">+7</option>
+                <option value="+375">+375</option>
+                <option value="+380">+380</option>
+                <option value="+86">+86</option>
+            </select>
+            <input type="tel" placeholder="Номер телефона пользователя" maxlength="10" id="order-phone-number" readonly onfocus="this.removeAttribute('readonly')">
+        </div>
+        
 
         <p class="error-p" id="error-branch" style="display: none;"></p>
         <select id="branch-id">
@@ -37,8 +48,8 @@
 
         <textarea placeholder="Комментарий" id="user-comment"></textarea>
 
-        <p id="order-summ">Итого: 228 р</p>
-        <button type="button">Оформить заказ</button>
+        <p id="order-summ"></p>
+        <button type="button" id="create-order-button">Оформить заказ</button>
 
     </div>
 {% endblock %}

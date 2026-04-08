@@ -5,8 +5,6 @@
     gap: 5px;
 
     margin: 20px 10vw;
-
-
 }
 
 .content > input {
@@ -35,7 +33,7 @@
     text-align: center;
 }
 
-.content > p {
+#order-summ {
     font-family: "Istok Web";
     font-size: var(--normal-font-size);
     color: var(--dark-brown-color);
@@ -56,7 +54,7 @@
     transition: var(--transition-settings);
 }
 
-.content > textarea::placeholder {
+.content > textarea::placeholder, #order-phone-number::placeholder {
     color: var(--normal-browm-color);
 }
 
@@ -88,5 +86,48 @@
 }
 
 .error-p {
+    width: calc(150px + 50vw);
+    text-align: justify;
+    font-size: var(--normal-font-size);
+    font-family: "Wix Madefor Text";
     color: red;
+}
+
+#user-phone-container {
+    width: calc(150px + 50vw);
+    height: 60px;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+#order-phone-country-code, #order-phone-number {
+    height: 60px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 20px;
+    appearance: none;
+    background-color: var(--header-background-color);
+    font-size: var(--normal-font-size);
+    transition: var(--transition-settings);
+    font-family: "Wix Madefor Text";
+    color: var(--dark-brown-color);
+}
+
+#order-phone-country-code {
+    flex-grow: 1;
+    text-align: center;
+}
+
+#order-phone-number {
+    flex-grow: 30;
+}
+
+.content > input:hover, .content > select:hover, .content > textarea:hover, #order-phone-number:hover {
+    transform: scale(1.02);
+}
+
+.content > button:hover, #order-phone-country-code:hover {
+    transform: scale(1.05);
 }

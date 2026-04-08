@@ -58,6 +58,27 @@ def product_page(request: Request, product_id: int = Path(gt=0)):
 
 
 @html_route.get(
+    path="/new_order/success",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница с сообщением об успешном создании заказа"
+)
+def success_page(request: Request):
+    branches = get_branches_info()
+    categories = get_categories_info()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="success_order_creating_page.html",
+        context={
+            "branches": branches,
+            "categories": categories,
+            "domain": settings.full_domain
+        }
+    )
+
+
+@html_route.get(
     path="/faq",
     response_class=HTMLResponse,
     tags=["</> HTML запросы сайта"],

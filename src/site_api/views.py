@@ -11,7 +11,7 @@ from sqlalchemy.orm import selectinload, joinedload
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, Session
-from src.errors import NoRecordError
+from src.errors import *
 
 
 OPEN_ORDER_STATUS_ID = 1
@@ -105,10 +105,10 @@ def get_product_info_by_id(product_id):
 def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
         branch = session.get(BranchesORM, {"id": order_data.branch_id})
         if branch is None:
-            raise NoRecordError(f"Филиал с id={order_data.branch_id} не найден")
+            raise NoBranchError()
 
         if not branch.is_active_for_order:
-            raise ValueError("Указанный филиал недоступен для оформления заказа")
+            raise UnavaliableBranch()
 
         product_ids = [item.product_id for item in order_data.items]
 
@@ -118,24 +118,11 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
 
         products_map = {product.id: product for product in products}
 
-        missing_ids = [product_id for product_id in product_ids if product_id not in products_map]
-        if missing_ids:
-            raise NoRecordError({
-                "message": "Часть товаров не найдена",
-                "ids": missing_ids
-            })
+        unvaliable_products = [product_id for product_id in product_ids if product_id not in products_map]
+        unvaliable_products.extend([product.id for product in products if not product.is_visible or not product.category.display_on_site])
 
-        unavailable_ids = [
-            product.id
-            for product in products
-            if not product.is_visible or not product.category.display_on_site
-        ]
-
-        if unavailable_ids:
-            raise ValueError({
-                "message": "Часть товаров недоступна для оформления заказа",
-                "ids": unavailable_ids
-            })
+        if unvaliable_products:
+            raise UnavaliableProducts(unvaliable_products)
 
         new_order = OrdersORM(
             user_id=user_id,
@@ -171,7 +158,4 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
 
         session.commit()
 
-        return {
-            "message": "Заказ успешно создан",
-            "order_id": new_order.id
-        }
+

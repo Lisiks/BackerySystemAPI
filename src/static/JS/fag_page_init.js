@@ -3,15 +3,21 @@ import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
 import { LikedProductCirtain } from "./liked_products_module.js"
 import { AddProductWindow } from "./add_product_module.js"
+import { EmailForm} from "./email_message_module.js"
+
+import { LoadingWindow } from "./load_window_module.js"
+import { createMessage } from "./messages.js"
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const likedProductsModalWindow = new LikedProductCirtain();
     const addingProductModalWindow = new AddProductWindow();
+    const emailForm = new EmailForm();
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
     const openLikedProductsBtn = document.getElementById('liked-products-button');
+    const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
     
 
     if (sessionStorage.getItem('productCart') === null) {
@@ -41,6 +47,8 @@ async function initPage() {
     openLikedProductsBtn.addEventListener('click', () => {
         likedProductsModalWindow.openWindow();
     });
+
+    sendSupportEmailBtn.addEventListener('click', emailForm.sendMessage);
 
     document.addEventListener('click', (event) => {   
         if (event.target.hasAttribute('data-js-in-cart-button')) {

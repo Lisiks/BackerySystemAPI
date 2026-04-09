@@ -82,3 +82,28 @@ export async function createOrder(username, phone, productArray, selectedBranchI
         return "NetWorkError";
     }
 }
+
+export async function sendSupportMail(userName, userEmail, mailTheme, mailText) {
+    try {
+        const rawResult = await fetch(
+            `${window.location.origin}/sitedata/support`,
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "username": userName,
+                    "user_email": userEmail,
+                    "message_theme": mailTheme,
+                    "message_text": mailText
+                })
+            }
+        )
+        const result = await rawResult.json();
+        return result.message;
+
+    } catch (error) {
+        return "NetworkError";
+    }
+}

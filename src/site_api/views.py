@@ -1,6 +1,11 @@
 from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
+from src.config import settings
+
+import smtplib
+from email.message import EmailMessage
+import ssl
 
 
 
@@ -157,5 +162,24 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
         new_order.total_amount = total_amount
 
         session.commit()
+
+
+def send_support_message(user_author, theme, text, responce_email):
+    new_message = EmailMessage()
+    new_message["From"] = settings.SUPPORT_EMAIL_ADDRESS
+    new_message["To"] = settings.SUPPORT_EMAIL_ADDRESS
+    new_message["Subject"] = f"Сообщение в поддержку от {user_author}: {theme}"
+
+    new_email_body = f"{text}\nEmail для обратной связи: {responce_email}"
+    new_message.set_content(new_email_body)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT) as server:
+        server.starttls(context=context)
+        server.login(settings.SUPPORT_EMAIL_ADDRESS, settings.SUPPORT_EMAIL_PASSWORD)
+        server.send_message(new_message)
+
+
+
 
 

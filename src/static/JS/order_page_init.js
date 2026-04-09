@@ -1,13 +1,14 @@
 import { loadProducts } from "./server_queries.js";
 import { UserAccountExitWindow } from "./user_account_module.js"
-import { createMessage } from "./messages.js"
 import { createOrder } from "./server_queries.js"
 import { LoadingWindow } from "./load_window_module.js"
-
+import { createMessage } from "./messages.js"
+import { EmailForm} from "./email_message_module.js"
 
 class OrderPage {
     constructor() {
         this.exitAccountWindow = new UserAccountExitWindow();
+        this.emailForm = new EmailForm();
 
     
         this.userNameElement = document.getElementById('order-name');
@@ -30,6 +31,7 @@ class OrderPage {
     async initPage() {
         const openProductCartBtn = document.getElementById('shopping-cart-button');
         const openLikedProductsBtn = document.getElementById('liked-products-button');
+        const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
         openLikedProductsBtn.style.display = 'none';
         openProductCartBtn.style.display = 'none';
 
@@ -83,6 +85,8 @@ class OrderPage {
         this.orderBranchElement.addEventListener('focus', () => {this.errorOrderBranchElement.style.display = 'none'});
         this.orderDate.addEventListener('focus', () => {this.errorOrderDate.style.display = 'none'});
         this.orderTime.addEventListener('focus', () => {this.errorOrderTime.style.display = 'none'});
+
+        sendSupportEmailBtn.addEventListener('click', this.emailForm.sendMessage)
     }
 
     showlabelError(label, message) {

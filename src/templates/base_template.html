@@ -60,13 +60,13 @@
                 </div>
             </div>
 
-            <form action="#" method="post" id="footer-contacts-form">
-                <input type="text" name="user-name" required maxlength="50" placeholder="Имя:">
-                <input type="email" name="user-email" required placeholder="Еmail:">
-                <input type="text" name="message-theme" required maxlength="100" placeholder="Тема сообщения:">
-                <textarea name="message-text" required></textarea>
-                <button type="submit">Отправить</button>
-            </form>
+            <div id="footer-contacts-form">
+                <input type="text" id="user-name-support" maxlength="50" placeholder="Имя:" readonly onfocus="this.removeAttribute('readonly')">
+                <input type="email" id="user-email-support" placeholder="Еmail:" readonly onfocus="this.removeAttribute('readonly')">
+                <input type="text" id="message-theme-support" maxlength="100" placeholder="Тема сообщения:" readonly onfocus="this.removeAttribute('readonly')">
+                <textarea id="message-text-support"></textarea>
+                <button type="button" id="send-support-mail-btn">Отправить</button>
+            </div>
 
         </div>
     </footer>

@@ -72,3 +72,25 @@ def post_order(
             content={"message": "UnavaliableProduct", "products": e.args[0]},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
+
+@site_data_route.post(
+    path='/support',
+    tags=["Запросы для фронтенда сайта ⚙️"],
+    name="Отправить сообщение на почту поддержки",
+    response_class=JSONResponse
+)
+def create_support_msg(support_message: SupportMessage):
+    try:
+        send_support_message(support_message.username, support_message.message_theme, support_message.message_text, support_message.user_email)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_201_CREATED
+        )
+    except Exception as e:
+        return JSONResponse(
+            content={"message": "ServerError"},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+

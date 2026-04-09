@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 
 
@@ -55,3 +55,14 @@ class OrderAddDTO(BaseModel):
 class OrderCreateResponseDTO(BaseModel):
     message: str
     order_id: int = Field(gt=0)
+
+
+class SupportMessage(BaseModel):
+    username: str = Field(max_length=50)
+    user_email: EmailStr
+    message_theme: str = Field(max_length=100)
+    message_text: str
+
+
+
+

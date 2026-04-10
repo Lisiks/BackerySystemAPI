@@ -143,6 +143,36 @@ def delete_favorite_product(
         )
 
 
+@site_data_route.get(
+    path="/orders",
+    tags=["Заказы🧾"],
+    name="Получить все заказы текущего пользователя",
+    summary="При помощи данного запроса должно производиться получение всех заказов текущего пользователя "
+            "по access JWT токену.",
+    response_class=JSONResponse
+)
+def get_orders(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    try:
+        access_token = credentials.credentials
+
+        with session_fabric() as session:
+            user = validate_access_token(access_token, session)
+            orders = get_user_orders(user.id, session)
+
+        return JSONResponse(
+            content={"orders": orders},
+            status_code=status.HTTP_200_OK
+        )
+
+    except HTTPException as e:
+        return JSONResponse(
+            content={"message": "Ошибка авторизации", "description": e.detail},
+            status_code=e.status_code
+        )
+
+
 @site_data_route.post(
     path="/orders/add",
     tags=["Заказы🧾"],

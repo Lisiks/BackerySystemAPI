@@ -199,3 +199,50 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
             "message": "Заказ успешно создан",
             "order_id": new_order.id
         }
+
+def get_user_orders(user_id: int, session: Session):
+    orders = session.execute(
+        select(OrdersORM)
+        .where(OrdersORM.user_id == user_id)
+        .order_by(OrdersORM.created_at.desc(), OrdersORM.id.desc())
+    ).scalars().all()
+
+    result = []
+
+    for order in orders:
+        branch = session.get(BranchesORM, order.branch_id)
+        status = session.get(OrderStatusesORM, order.status_id)
+
+        order_items_rows = session.execute(
+            select(OrderItemsORM, ProductsORM)
+            .join(ProductsORM, ProductsORM.id == OrderItemsORM.product_id)
+            .where(OrderItemsORM.order_id == order.id)
+        ).all()
+
+        items = [
+            UserOrderItemDTO(
+                product_id=product.id,
+                product_name=str(product.name),
+                quantity=order_item.quantity,
+                total_price=order_item.total_price,
+            )
+            for order_item, product in order_items_rows
+        ]
+
+        result.append(
+            UserOrderDTO(
+                id=order.id,
+                created_at=order.created_at,
+                order_datetime=order.order_datetime,
+                branch_id=order.branch_id,
+                branch_name=str(branch.branches_name) if branch else "",
+                branch_address=str(branch.branches_address) if branch else "",
+                status_id=order.status_id,
+                status_name=str(status.status_name) if status else "",
+                comment=order.comment,
+                total_amount=order.total_amount,
+                items=items,
+            ).model_dump(mode="json")
+        )
+
+    return result

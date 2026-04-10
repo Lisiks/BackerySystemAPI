@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from src.database.database import session_fabric
 from src.database.orm_models import UsersORM
 from src.login_api.dto_models import (RegisterUserRequestDTO, RegisterUserResponseDTO, AuthenticateUserRequestDTO,
-                                      AuthenticateUserResponseDTO, RefreshAccessTokenResponseDTO)
-from src.login_api.views import register_user, authenticate_user, refresh_access_token, validate_access_token
+                                      AuthenticateUserResponseDTO, RefreshAccessTokenResponseDTO, LogoutUserResponseDTO)
+from src.login_api.views import (register_user, authenticate_user, refresh_access_token, validate_access_token,
+                                 logout_user)
 
 
 login_route = APIRouter(prefix="/site/login", tags=["Логин"])
@@ -61,3 +62,15 @@ def refresh_access_token_route(
     session: Session = Depends(get_db),
 ):
     return refresh_access_token(request=request, session=session)
+
+
+@login_route.post(
+    "/logout",
+    response_model=LogoutUserResponseDTO,
+    status_code=200,
+    summary="При помощи данного запроса должно производиться удаление refresh токена из cookies при выходе с сайта.",
+)
+def logout_user_route(
+    response: Response,
+):
+    return logout_user(response=response)

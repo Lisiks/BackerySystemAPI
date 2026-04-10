@@ -151,3 +151,19 @@ class Employee(Base):
     branches_id: Mapped[int] = mapped_column(ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"))
 
     branch: Mapped['BranchesORM'] = relationship(back_populates="employees")
+
+
+class EmployeesORM(Base):
+    __tablename__ = "employees"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    phone: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    position: Mapped[str] = mapped_column(String(100), nullable=False)
+    username: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    branch_id: Mapped[int] = mapped_column(
+        ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False
+    )
+

@@ -64,20 +64,6 @@ class UsersORM(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
-class FavoriteProductsORM(Base):
-    __tablename__ = "favorite_products"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=False
-    )
-
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=False
-    )
 
 class OrderStatusesORM(Base):
     __tablename__ = "order_statuses"

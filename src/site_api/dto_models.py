@@ -31,12 +31,6 @@ class ProductsFullInfoDTO(ProductsGetDTO):
     carbs: float = Field(ge=0)
     category_name: str = Field(max_length=100)
 
-class FavoriteProductAddDTO(BaseModel):
-    product_id: int = Field(gt=0)
-
-class MessageDTO(BaseModel):
-    message: str
-
 
 class OrderItemAddDTO(BaseModel):
     product_id: int = Field(gt=0)

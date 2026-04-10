@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 
 
@@ -38,6 +38,7 @@ class OrderItemAddDTO(BaseModel):
 
 
 class OrderAddDTO(BaseModel):
+    username: str = Field(max_length=50)
     phone: str = Field(min_length=5, max_length=30)
     items: list[OrderItemAddDTO] = Field(min_length=1)
     order_datetime: datetime
@@ -73,3 +74,10 @@ class UserOrderDTO(BaseModel):
     total_amount: float = Field(ge=0)
 
     items: list[UserOrderItemDTO]
+
+
+class SupportMessage(BaseModel):
+    username: str = Field(max_length=50)
+    user_email: EmailStr
+    message_theme: str = Field(max_length=100)
+    message_text: str

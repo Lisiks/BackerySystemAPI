@@ -1,0 +1,133 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+
+    margin: 20px 10vw;
+}
+
+.content > input {
+    width: calc(150px + 50vw);
+    height: 60px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 20px;
+    background-color: var(--header-background-color);
+    font-size: var(--normal-font-size);
+    transition: var(--transition-settings);
+    font-family: "Wix Madefor Text";
+    color: var(--dark-brown-color);
+}
+
+.content > input::placeholder {
+    color: var(--normal-browm-color);
+}
+
+.content > h2 {
+    font-family: "Istok Web";
+    font-size: var(--h2-font-size);
+    color: var(--dark-brown-color);
+    align-self: stretch;
+    text-align: center;
+}
+
+#order-summ {
+    font-family: "Istok Web";
+    font-size: var(--normal-font-size);
+    color: var(--dark-brown-color);
+    font-weight: bold;
+}
+
+.content > textarea {
+    width: calc(150px + 50vw);
+    height: 350px;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: var(--header-background-color);
+
+    color: var(--dark-brown-color);
+    font-size: var(--normal-font-size);
+    resize: none;
+    transition: var(--transition-settings);
+}
+
+.content > textarea::placeholder, #order-phone-number::placeholder {
+    color: var(--normal-browm-color);
+}
+
+.content > button {
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: var(--dark-brown-color);
+
+    color: var(--header-background-color);
+    font-size: var(--normal-font-size);
+    transition: var(--transition-settings);
+    cursor: pointer;
+}
+
+.content > select {
+    width: calc(150px + 50vw);
+    height: 60px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 20px;
+    appearance: none;
+    background-color: var(--header-background-color);
+    font-size: var(--normal-font-size);
+    transition: var(--transition-settings);
+    font-family: "Wix Madefor Text";
+    color: var(--dark-brown-color);
+}
+
+.error-p {
+    width: calc(150px + 50vw);
+    text-align: justify;
+    font-size: var(--normal-font-size);
+    font-family: "Wix Madefor Text";
+    color: red;
+}
+
+#user-phone-container {
+    width: calc(150px + 50vw);
+    height: 60px;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+#order-phone-country-code, #order-phone-number {
+    height: 60px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 20px;
+    appearance: none;
+    background-color: var(--header-background-color);
+    font-size: var(--normal-font-size);
+    transition: var(--transition-settings);
+    font-family: "Wix Madefor Text";
+    color: var(--dark-brown-color);
+}
+
+#order-phone-country-code {
+    flex-grow: 1;
+    text-align: center;
+}
+
+#order-phone-number {
+    flex-grow: 30;
+}
+
+.content > input:hover, .content > select:hover, .content > textarea:hover, #order-phone-number:hover {
+    transform: scale(1.02);
+}
+
+.content > button:hover, #order-phone-country-code:hover {
+    transform: scale(1.05);
+}

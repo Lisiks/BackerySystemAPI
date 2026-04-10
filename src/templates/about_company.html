@@ -6,21 +6,14 @@
 
 {% block page_css %}
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/base_template_styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='CSS/shopping_cart_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/curtain_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/about_company_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
 {% endblock %}
 
-{% block menu_links %}
-    {% for category in categories %}
-        <a target="_self" href="{{domain + 'site/catalog/' + '#category-' + category['id'] | string }}">{{category['category_name']}}</a>
-    {% endfor %}
-    <a href="#footer-block">Контакты</a>
-    <a href="#">Профиль</a>
-    <a href="#">Избранные товары</a>
-    <a target="_self" href="{{domain + 'site/about/'}}">О компании</a>
-    <a target="_self" href="{{domain + 'site/faq/'}}">FAQ</a>
-{% endblock %}
 
 {% block content %}
 
@@ -37,23 +30,17 @@
             <button type="button" id="last-slider-button" class="slider-btn">&lt</button>
             <button type="button" id="next-slider-button" class="slider-btn">&gt</button>
         </div>
-
-
         <p class="text">Мы не просто продаем хлеб — мы создаем атмосферу. Мы верим, что счастье кроется в деталях: в хрустящей корочке, в аромате свежего круассана и в улыбке, с которой мы встречаем вас каждое утро. Для нас «67 Vkusov» — это способ сделать каждый ваш день чуть вкуснее, уютнее и добрее.</p>
    </div>
 
 {% endblock %}
 
-{% block branch_contacts %}
-    {% for branch in branches %}
-        <p>{{ branch['branches_address'] }}, {{branch['branches_phone']}}</p>
-    {% endfor %}
-{% endblock %}
-
 
 {% block page_windows %}
-    {% include '_shopping_cart.html' %}
+    {% include '_add_product_window.html' %}
     {% include '_account.html' %}
+    {% include '_liked_products.html' %}
+    {% include '_shopping_cart.html' %}
 {% endblock %}
 
 {% block page_js %}

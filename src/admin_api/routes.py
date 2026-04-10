@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, UploadFile, File, Form, Depends, HTTPException
+from fastapi import APIRouter, status, UploadFile, File, Form, Depends, HTTPException, Path
 from fastapi.responses import JSONResponse
 
 from sqlalchemy.exc import IntegrityError
@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 
 from src.errors import NoRecordError
 from src.database.database import session_fabric
-from src.admin_api.orders.views import get_user_orders
+from src.admin_api.orders.views import *
 from src.admin_api.employees.dto_models import ( EmployeeAddAndUpdateDTO, AuthenticateEmployeeRequestDTO,
                                            AuthenticateEmployeeResponseDTO)
+from src.admin_api.orders.dto_models import OrderStatusChangeModel
 from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
                                            delete_employee, authenticate_employee)
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
@@ -276,6 +277,35 @@ def put_product(
             content={"message": "Validation error", "description": str(e)},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
+
+@admin_route.get(
+    path="/orders/{employee_id}",
+    tags=["Заказы"],
+    name="Получить все заказы, доступные сотруднику",
+    summary="Получить все заказы, доступные сотруднику",
+    response_class=JSONResponse
+)
+def get_orders(employee_id: int = Path(gt=0)):
+    try:
+        result = get_all_orders_to_employee(employee_id)
+        return JSONResponse(content={"message": "ok", "orders": result}, status_code=status.HTTP_200_OK)
+    except NoRecordError as e:
+        return JSONResponse(content={"message": f"{e.args[0]}"}, status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
+
+@admin_route.put(
+    path="/orders/update",
+    tags=["Заказы"],
+    name="Изменить статус заказа",
+    summary="Изменить статус заказа",
+    response_class=JSONResponse
+)
+def change_order_status_route(change_order_data: OrderStatusChangeModel):
+    try:
+        change_order_status(change_order_data)
+        return JSONResponse(content={"message": "ok"}, status_code=status.HTTP_200_OK)
+    except NoRecordError as e:
+        return JSONResponse(content={"message": f"{e.args[0]}"}, status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 
 @admin_route.get(

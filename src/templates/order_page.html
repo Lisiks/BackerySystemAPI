@@ -1,0 +1,63 @@
+{% extends 'base_template.html' %}
+
+{% block page_title %}
+    <title>Оформить заказ</title>
+{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/base_template_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/order_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="content">
+        <h2>Оформление заказа</h2>
+
+        <p class="error-p" id="error-user-name" style="display: none;"></p>
+        <input type="text" placeholder="Имя пользователя" maxlength="50" id="order-name" readonly onfocus="this.removeAttribute('readonly')">
+
+        <p class="error-p" id="error-user-phone" style="display: none;"></p>
+        <div id="user-phone-container">
+            <select id="order-phone-country-code">
+                <option value="+7">+7</option>
+                <option value="+375">+375</option>
+                <option value="+380">+380</option>
+                <option value="+86">+86</option>
+            </select>
+            <input type="tel" placeholder="Номер телефона пользователя" maxlength="10" id="order-phone-number" readonly onfocus="this.removeAttribute('readonly')">
+        </div>
+        
+
+        <p class="error-p" id="error-branch" style="display: none;"></p>
+        <select id="branch-id">
+            <option value="_" disabled selected>Адрес самовывоза</option>
+            {% for branch in branches %}
+                <option value="{{ branch['id'] }}">{{branch['branches_address']}}</option>
+            {% endfor %}
+        </select>
+
+        <p class="error-p" id="error-order-date" style="display: none;"></p>
+        <input type="date" placeholder="Выбор даты" id="order-date">
+        <p class="error-p" id="error-order-time" style="display: none;"></p>
+        <input type="time" placeholder="Выбор времени" id="order-time">
+
+        <textarea placeholder="Комментарий" id="user-comment"></textarea>
+
+        <p id="order-summ"></p>
+        <button type="button" id="create-order-button">Оформить заказ</button>
+
+    </div>
+{% endblock %}
+
+{% block page_windows %}
+    {% include '_account.html' %}
+{% endblock %}
+
+{% block page_js %}
+    <script type="module" src="{{ url_for('static', path='JS/order_page_init.js')}}"></script>
+{% endblock %}

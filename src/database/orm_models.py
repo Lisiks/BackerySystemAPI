@@ -13,6 +13,9 @@ class BranchesORM(Base):
     branches_phone: Mapped[str] = mapped_column(nullable=False, unique=True)
     is_active_for_order: Mapped[bool] = mapped_column(nullable=False)
 
+    orders: Mapped[list['OrdersORM']] = relationship(back_populates='branch')
+    employees: Mapped[list['Employee']] = relationship(back_populates='branch')
+
 
 class CategoriesORM(Base):
     __tablename__ = "categories"
@@ -49,10 +52,8 @@ class ProductsORM(Base):
     image_url: Mapped[str] = mapped_column(nullable=False)
     is_visible: Mapped[bool] = mapped_column(nullable=False, default=True)
 
-
-    category: Mapped['CategoriesORM'] = relationship(
-        back_populates="visible_category_products"
-    )
+    category: Mapped['CategoriesORM'] = relationship(back_populates="visible_category_products")
+    order_products: Mapped[list['OrderItemsORM']] = relationship(back_populates='product')
 
 
 class UsersORM(Base):
@@ -65,11 +66,20 @@ class UsersORM(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
+    orders: Mapped['OrdersORM'] = relationship(
+        back_populates="user"
+    )
+
+
 class OrderStatusesORM(Base):
     __tablename__ = "order_statuses"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     status_name: Mapped[str] = mapped_column(nullable=False, unique=True)
+
+    orders: Mapped[list['OrdersORM']] = relationship(
+        back_populates="order_status"
+    )
 
 
 class OrdersORM(Base):
@@ -82,6 +92,7 @@ class OrdersORM(Base):
         nullable=False
     )
 
+    username: Mapped[str] = mapped_column(nullable=False)
     phone: Mapped[str] = mapped_column(String(30), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
@@ -108,6 +119,12 @@ class OrdersORM(Base):
 
     total_amount: Mapped[float] = mapped_column(nullable=False, default=0)
 
+    order_status: Mapped['OrderStatusesORM'] = relationship(back_populates="orders")
+    user: Mapped['UsersORM'] = relationship(back_populates="orders")
+    branch: Mapped['BranchesORM'] = relationship(back_populates='orders')
+    products: Mapped[list['OrderItemsORM']] = relationship(back_populates="order")
+
+
 
 class OrderItemsORM(Base):
     __tablename__ = "order_items"
@@ -123,8 +140,19 @@ class OrderItemsORM(Base):
     )
 
     quantity: Mapped[int] = mapped_column(nullable=False)
-
     total_price: Mapped[float] = mapped_column(nullable=False)
+
+    order: Mapped['OrdersORM'] = relationship(back_populates="products")
+    product: Mapped['ProductsORM'] = relationship(back_populates="order_products")
+
+
+class Employee(Base):
+    __tablename__ = "employee"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    branches_id: Mapped[int] = mapped_column(ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"))
+
+    branch: Mapped['BranchesORM'] = relationship(back_populates="employees")
 
 
 class EmployeesORM(Base):
@@ -140,3 +168,4 @@ class EmployeesORM(Base):
         ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
         nullable=False
     )
+

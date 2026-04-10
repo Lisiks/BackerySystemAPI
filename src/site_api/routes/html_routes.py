@@ -36,6 +36,7 @@ def product_page(request: Request, product_id: int = Path(gt=0)):
     branches = get_branches_info()
     categories = get_categories_info()
     product_info = get_product_info_by_id(product_id)
+
     return templates.TemplateResponse(
         request=request,
         name="product.html",
@@ -43,6 +44,35 @@ def product_page(request: Request, product_id: int = Path(gt=0)):
             "branches": branches,
             "categories": categories,
             "product": product_info,
+            "domain": settings.full_domain
+        }) if product_info is not None else templates.TemplateResponse(
+
+        request=request,
+        name="error_page.html",
+        context={
+            "branches": branches,
+            "categories": categories,
+            "domain": settings.full_domain
+        }
+    )
+
+
+@html_route.get(
+    path="/new_order/success",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница с сообщением об успешном создании заказа"
+)
+def success_page(request: Request):
+    branches = get_branches_info()
+    categories = get_categories_info()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="success_order_creating_page.html",
+        context={
+            "branches": branches,
+            "categories": categories,
             "domain": settings.full_domain
         }
     )
@@ -78,5 +108,22 @@ def index(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="about_company.html",
+        context={"branches": branches, "categories": categories, "domain": settings.full_domain}
+    )
+
+
+@html_route.get(
+    path="/new_order",
+    response_class=HTMLResponse,
+    tags=["</> HTML запросы сайта"],
+    summary="Страница для создания заказа"
+)
+def index(request: Request):
+    branches = get_branches_info()
+    categories = get_categories_info()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="order_page.html",
         context={"branches": branches, "categories": categories, "domain": settings.full_domain}
     )

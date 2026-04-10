@@ -1,4 +1,4 @@
-@keyframes shoping-cart-moving {
+@keyframes curtain-cart-moving {
     0% {
         right: -450px;
     }
@@ -11,7 +11,7 @@
 
 
 
-#black-shopping-cart-bg {
+.curtain-bg {
     z-index: 3;
     position: fixed;
     top: 0px;
@@ -21,7 +21,7 @@
     background-color: rgba(0, 0, 0, 0.35);
 }
 
-#shopping-cart {
+.curtain-container {
     position: fixed;
     top: 0px;
     right: 0px;
@@ -35,7 +35,7 @@
     flex-direction: column;
     gap: 10px;
 
-    animation-name: shoping-cart-moving;
+    animation-name: curtain-cart-moving;
     animation-duration: 0.4s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
@@ -44,7 +44,7 @@
 
 /*---------------------------------------------------Настройка заголовка панель---------------------------------------------------------------------*/
 
-#shoping-cart-header {
+.curtain-header {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
@@ -54,25 +54,25 @@
     border-bottom: 1px solid gray;
 }
 
-#shoping-cart-header > h2 {
+.curtain-header > h2 {
     font-family: "Istok Web";
     font-size: var(--h2-font-size);
 }
 
-#close-cart-button {
+.curtain-header > button {
     width: 35px;
     height: 35px;
 
     background-color: transparent;
     border: none;
-    background-image: url("../StaticImages/close_button_image.png");
+    background-image: url("/static/StaticImages/close_button_image.png");
     background-position: center;
     background-size: cover;
 }
 
 /*---------------------------------------------------Настройка блоака товаров панели---------------------------------------------------------------------*/
 
-#shoping-cart-products-block {
+.curtain-product-block {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -184,13 +184,9 @@
 }
 
 .product-in-cart-change-button {
-    
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    
 }
 
 .product-in-cart-change-button > button {
@@ -203,23 +199,20 @@
     background-size: cover;
 }
 
-.product-in-cart-change-button > .liked-position-button {
-    background-image: url("../StaticImages/liked_button_image.png");
-} 
 
 .product-in-cart-change-button > .delete-position-button {
-    background-image: url("../StaticImages/trash_image.png");
+    background-image: url("/static/StaticImages/trash_image.png");
 } 
 
 
 
-#close-cart-button, .product-in-cart-change-button > .liked-position-button, .product-in-cart-change-button > .delete-position-button,
-.product-in-cart-count > button, #shoping-cart-order-button {
+.curtain-header > button, .product-in-cart-change-button > .liked-position-button, .product-in-cart-change-button > .delete-position-button,
+.product-in-cart-count > button, #shoping-cart-order-button, .liked-products-change-buttons > button {
     transition: all 0.3s 0s ease-in-out;
 }
 
-#close-cart-button:hover, .product-in-cart-change-button > .liked-position-button:hover, .product-in-cart-change-button:hover > .delete-position-button:hover,
-.product-in-cart-count > button:hover {
+.curtain-header > button:hover, .product-in-cart-change-button > .liked-position-button:hover, .product-in-cart-change-button:hover > .delete-position-button:hover,
+.product-in-cart-count > button:hover, .liked-products-change-buttons > button:hover {
     transform: scale(1.15);
 }
 
@@ -227,4 +220,27 @@
     transform: scale(1.05);
 }
 
+/* --------------------------------------------------Дополнительныйй раздел карточки для шорки изрбанного----------------------------- */
+
+.liked-products-change-buttons {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.liked-products-change-buttons > button {
+    width: 40px;
+    height: 40px;
+
+    background-color: transparent;
+    border: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.liked-products-change-buttons > .add-position-button {
+    background-image: url("/static/StaticImages/shoping_card_button_image.png");
+} 
 

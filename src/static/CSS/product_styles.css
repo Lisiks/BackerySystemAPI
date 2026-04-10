@@ -1,9 +1,11 @@
 
 /* Основной контейнер */
-#content {
+.content {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px; /* Отступ между фото и текстом */
+  margin: 20px 10vw;
+
 }
 
 /* Левая секция с фото - 45% */
@@ -35,6 +37,14 @@
   font-family: "Wix Madefor Text";
   font-size: var(--h2-font-size);
   margin-bottom: 20px;
+}
+
+.error-h2 {
+    font-family: "Wix Madefor Text";
+    font-size: var(--h2-font-size);
+    margin: 20px;
+    text-align: center;
+    color: var(--dark-brown-color);
 }
 
 
@@ -85,7 +95,6 @@
 #liked-button {
   width: calc(45px + 1vw);
   background-color: transparent;
-  background-image: url('../StaticImages/liked_button_image.png');
   background-position: center;
   background-size: cover;
 }

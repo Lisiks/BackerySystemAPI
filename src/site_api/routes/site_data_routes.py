@@ -73,42 +73,54 @@ def post_order(
 
         with session_fabric() as session:
             user = validate_access_token(access_token, session)
-            result = create_order(user.id, order_data, session)
+            create_order(user.id, order_data, session)
 
         return JSONResponse(
-            content=result,
+            content={"message": "ok"},
             status_code=status.HTTP_201_CREATED
         )
 
-    except HTTPException as e:
+    except HTTPException:
         return JSONResponse(
-            content={"message": "Ошибка авторизации", "description": e.detail},
-            status_code=e.status_code
+            content={"message": "AuthError"},
+            status_code=status.HTTP_403_FORBIDDEN
         )
-
-    except ValueError as e:
-        payload = e.args[0] if e.args else "Ошибка валидации"
-
-        if isinstance(payload, dict):
-            return JSONResponse(
-                content=payload,
-                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
-            )
-
+    except NoBranchError:
         return JSONResponse(
-            content={"message": "Ошибка валидации", "description": str(payload)},
+            content={"message": "UncorrectBranch"},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 
-    except NoRecordError as e:
-        payload = e.args[0] if e.args else "Ошибка отсутствующей записи"
-
-        if isinstance(payload, dict):
-            return JSONResponse(
-                content=payload,
-                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
-            )
+    except UnavaliableBranch:
         return JSONResponse(
-            content={"message": "Ошибка отсутствующей записи", "description": payload},
+            content={"message": "UnavaliableBranch"},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
+    except UnavaliableProducts as e:
+        return JSONResponse(
+            content={"message": "UnavaliableProduct", "products": e.args[0]},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@site_data_route.post(
+    path='/support',
+    tags=["Запросы для фронтенда сайта ⚙️"],
+    name="Отправить сообщение на почту поддержки",
+    response_class=JSONResponse
+)
+def create_support_msg(support_message: SupportMessage):
+    try:
+        send_support_message(support_message.username, support_message.message_theme, support_message.message_text, support_message.user_email)
+        return JSONResponse(
+            content={"message": "ok"},
+            status_code=status.HTTP_201_CREATED
+        )
+    except Exception as e:
+        return JSONResponse(
+            content={"message": "ServerError"},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+

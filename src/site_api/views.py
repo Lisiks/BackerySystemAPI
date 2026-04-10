@@ -1,10 +1,23 @@
 from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
+from src.config import settings
+
+import smtplib
+from email.message import EmailMessage
+import ssl
+
+
+
+
+from sqlalchemy import select, and_
+from sqlalchemy.orm import selectinload, joinedload
+
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, Session
-from src.errors import NoRecordError
+from src.errors import *
+
 
 OPEN_ORDER_STATUS_ID = 1
 
@@ -15,7 +28,7 @@ def get_branches_info():
             BranchesORM.id,
             BranchesORM.branches_address,
             BranchesORM.branches_phone
-        ).select_from(BranchesORM)
+        ).select_from(BranchesORM).where(BranchesORM.is_active_for_order == True)
 
         orm_result = session.execute(query).all()
         return [BranchesGetDTO.model_validate(orm_record, from_attributes=True)
@@ -64,9 +77,10 @@ def get_all_available_products_by_category():
         return result
 
 
+
 def get_product_info_by_id(product_id):
     with session_fabric() as session:
-        query = select(
+        query = query = select(
             ProductsORM.id,
             ProductsORM.name,
             ProductsORM.weight,
@@ -78,23 +92,28 @@ def get_product_info_by_id(product_id):
             ProductsORM.protein,
             ProductsORM.fat,
             ProductsORM.carbs,
-            CategoriesORM.category_name
-        ).select_from(ProductsORM).join(
-            CategoriesORM,
-            CategoriesORM.id == ProductsORM.category_id
-        ).where(ProductsORM.id == product_id)
 
-        orm_result = session.execute(query).one()
-        return ProductsFullInfoDTO.model_validate(orm_result, from_attributes=True).model_dump()
+            CategoriesORM.category_name  #
+        ).select_from(ProductsORM).join(ProductsORM.category).where(
+            and_(
+                ProductsORM.id == product_id,
+                ProductsORM.is_visible == True,
+                CategoriesORM.display_on_site == True
+            )
+        )
+
+
+        orm_result = session.execute(query).all()
+        return ProductsFullInfoDTO.model_validate(orm_result[0], from_attributes=True).dict() if len(orm_result) == 1 else None
 
 
 def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
         branch = session.get(BranchesORM, {"id": order_data.branch_id})
         if branch is None:
-            raise NoRecordError(f"Филиал с id={order_data.branch_id} не найден")
+            raise NoBranchError()
 
         if not branch.is_active_for_order:
-            raise ValueError("Указанный филиал недоступен для оформления заказа")
+            raise UnavaliableBranch()
 
         product_ids = [item.product_id for item in order_data.items]
 
@@ -104,27 +123,15 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
 
         products_map = {product.id: product for product in products}
 
-        missing_ids = [product_id for product_id in product_ids if product_id not in products_map]
-        if missing_ids:
-            raise NoRecordError({
-                "message": "Часть товаров не найдена",
-                "ids": missing_ids
-            })
+        unvaliable_products = [product_id for product_id in product_ids if product_id not in products_map]
+        unvaliable_products.extend([product.id for product in products if not product.is_visible or not product.category.display_on_site])
 
-        unavailable_ids = [
-            product.id
-            for product in products
-            if not product.is_visible or not product.category.display_on_site
-        ]
-
-        if unavailable_ids:
-            raise ValueError({
-                "message": "Часть товаров недоступна для оформления заказа",
-                "ids": unavailable_ids
-            })
+        if unvaliable_products:
+            raise UnavaliableProducts(unvaliable_products)
 
         new_order = OrdersORM(
             user_id=user_id,
+            username=order_data.username,
             phone=order_data.phone,
             created_at=datetime.now(),
             order_datetime=order_data.order_datetime,
@@ -160,6 +167,7 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
             "message": "Заказ успешно создан",
             "order_id": new_order.id
         }
+
 
 def get_user_orders(user_id: int, session: Session):
     orders = session.execute(
@@ -207,3 +215,19 @@ def get_user_orders(user_id: int, session: Session):
         )
 
     return result
+
+
+def send_support_message(user_author, theme, text, responce_email):
+    new_message = EmailMessage()
+    new_message["From"] = settings.SUPPORT_EMAIL_ADDRESS
+    new_message["To"] = settings.SUPPORT_EMAIL_ADDRESS
+    new_message["Subject"] = f"Сообщение в поддержку от {user_author}: {theme}"
+
+    new_email_body = f"{text}\nEmail для обратной связи: {responce_email}"
+    new_message.set_content(new_email_body)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT) as server:
+        server.starttls(context=context)
+        server.login(settings.SUPPORT_EMAIL_ADDRESS, settings.SUPPORT_EMAIL_PASSWORD)
+        server.send_message(new_message)

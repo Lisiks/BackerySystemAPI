@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     COOKIE_SECURE: bool = False
     COOKIE_SAMESITE: str = "lax"
 
+    SMTP_SERVER: str
+    SMTP_PORT: int
+    SUPPORT_EMAIL_ADDRESS: str
+    SUPPORT_EMAIL_PASSWORD: str
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @property

@@ -1,3 +1,5 @@
+import {createMessage} from "./messages.js"
+
 export class ShoppingCart {
     constructor(userAccountWindowObj) {
         this.shoppingCartWindowElement = document.getElementById('black-shopping-cart-bg');
@@ -6,26 +8,37 @@ export class ShoppingCart {
         this.closeCartButtonElement = document.getElementById("close-cart-button");
         this.makeOrderBtnElement = document.getElementById('shoping-cart-order-button');
         this.userAccountWindowObj = userAccountWindowObj;
+
+  
         
 
+        this.closeCartButtonElement.addEventListener('click', () => {
+            this.closeProductCart();
+        })
+
+        this.makeOrderBtnElement.addEventListener('click', () => {
+            this.makeOrder();
+        })
 
         document.addEventListener('click', (event) => {
-            if (event.target === this.closeCartButtonElement || event.target === this.shoppingCartWindowElement) {
-                this.shoppingCartWindowElement.style.display = 'none';
-                this.shoppingCartProductContainerElement.replaceChildren();
+            if (event.target === this.shoppingCartWindowElement) {
+                this.closeProductCart();
             } else if (event.target.classList.contains('increment-position-cart-button')) {
-                const currentProductId = event.target.productid;
+                const currentProductId = event.target.getAttribute('productId');
                 this.incrementCartPosition(currentProductId);
             } else if (event.target.classList.contains('decrement-position-cart-button')) {
-                const currentProductId = event.target.productid;
+                const currentProductId = event.target.getAttribute('productId');
                 this.decrementCartPosition(currentProductId);
             } else if (event.target.classList.contains('delete-position-button')) {
-                const currentProductId = event.target.productid;
+                const currentProductId = event.target.getAttribute('productId');
                 this.deleteCartPosition(currentProductId);
-            } else if (event.target === this.makeOrderBtnElement) {
-                this.makeOrder();
-            }
+            } 
         });
+    }
+
+    closeProductCart() {
+        this.shoppingCartWindowElement.style.display = 'none';
+        this.shoppingCartProductContainerElement.replaceChildren();
     }
 
 
@@ -35,85 +48,101 @@ export class ShoppingCart {
         const productCartData = JSON.parse(sessionStorage.getItem('productCart'));
         const productInfoData = JSON.parse(sessionStorage.getItem('productInfo'));
         const addingProductBlock = document.createDocumentFragment();
+        const likedProducts = JSON.parse(localStorage.getItem('likedProducts'));
 
         let allPrice = 0;
-        for(const productId in productCartData) {
+        Object.keys(productCartData).forEach(productId => {
             const productInfoObj = productInfoData[productId];
             const productCartInfoObj = productCartData[productId];
-            allPrice += productInfoObj.sale_price * productCartInfoObj.count;
+
+            if (!productCartInfoObj) {
+                delete productCartData[productId]
+            } else {
+                allPrice += productInfoObj.sale_price * productCartInfoObj.count;
 
 
-            const newProductInCartElement = document.createElement('div');
-            newProductInCartElement.classList.add('product-in-cart');
-            newProductInCartElement.id = `product-cart-position-${productId}`;
+                const newProductInCartElement = document.createElement('div');
+                newProductInCartElement.classList.add('product-in-cart');
+                newProductInCartElement.id = `product-cart-position-${productId}`;
 
-            const productImageElement = document.createElement('img');
-            productImageElement.src = productInfoObj.image_irl;
-            newProductInCartElement.append(productImageElement);
+                const productImageElement = document.createElement('img');
+                productImageElement.src = productInfoObj.image_irl;
+                newProductInCartElement.append(productImageElement);
 
-            const productInCartInfoElement = document.createElement('div');
-            productInCartInfoElement.classList.add('product-in-cart-info');
+                const productInCartInfoElement = document.createElement('div');
+                productInCartInfoElement.classList.add('product-in-cart-info');
 
-            const productNamePElement = document.createElement('p');
-            productNamePElement.classList.add('product-name');
-            productNamePElement.textContent = productInfoObj.name;
-            productInCartInfoElement.append(productNamePElement);
+                const productNamePElement = document.createElement('p');
+                productNamePElement.classList.add('product-name');
+                productNamePElement.textContent = productInfoObj.name;
+                productInCartInfoElement.append(productNamePElement);
 
-            const productWeightPElement = document.createElement('p');
-            productWeightPElement.classList.add('product-weight');
-            productWeightPElement.textContent = `${productInfoObj.weight} г`;
-            productInCartInfoElement.append(productWeightPElement);
+                const productWeightPElement = document.createElement('p');
+                productWeightPElement.classList.add('product-weight');
+                productWeightPElement.textContent = `${productInfoObj.weight} г`;
+                productInCartInfoElement.append(productWeightPElement);
 
-            const productPricePElement = document.createElement('p');
-            productPricePElement.classList.add('product-price');
-            productPricePElement.id = `product-cart-position-price-p-${productId}`;
-            productPricePElement.textContent = `${(productInfoObj.sale_price * productCartInfoObj.count).toFixed(2)} р`;
-            productInCartInfoElement.append(productPricePElement);
+                const productPricePElement = document.createElement('p');
+                productPricePElement.classList.add('product-price');
+                productPricePElement.id = `product-cart-position-price-p-${productId}`;
+                productPricePElement.textContent = `${(productInfoObj.sale_price * productCartInfoObj.count).toFixed(2)} р`;
+                productInCartInfoElement.append(productPricePElement);
 
-            newProductInCartElement.append(productInCartInfoElement);
-
-
-            const productInCartCountPlaceElement = document.createElement('div');
-            productInCartCountPlaceElement.classList.add('product-in-cart-count');
+                newProductInCartElement.append(productInCartInfoElement);
 
 
-            const decrementButtonElement = document.createElement('button');
-            decrementButtonElement.textContent = '-';
-            decrementButtonElement.productid = productId;
-            decrementButtonElement.classList.add('decrement-position-cart-button');
-            productInCartCountPlaceElement.append(decrementButtonElement);
+                const productInCartCountPlaceElement = document.createElement('div');
+                productInCartCountPlaceElement.classList.add('product-in-cart-count');
 
-            const productPositionCountElement = document.createElement('p');
-            productPositionCountElement.textContent = productCartInfoObj.count;
-            productPositionCountElement.id = `product-cart-position-count-p-${productId}`;
-            productInCartCountPlaceElement.append(productPositionCountElement);
 
-            const incrementButtonElement = document.createElement('button');
-            incrementButtonElement.textContent = '+';
-            incrementButtonElement.productid = productId;
-            incrementButtonElement.classList.add('increment-position-cart-button');
-            productInCartCountPlaceElement.append(incrementButtonElement);
+                const decrementButtonElement = document.createElement('button');
+                decrementButtonElement.textContent = '-';
+                decrementButtonElement.setAttribute('productId', productId);
+                decrementButtonElement.classList.add('decrement-position-cart-button');
+                productInCartCountPlaceElement.append(decrementButtonElement);
 
-            newProductInCartElement.append(productInCartCountPlaceElement);
+                const productPositionCountElement = document.createElement('p');
+                productPositionCountElement.textContent = productCartInfoObj.count;
+                productPositionCountElement.id = `product-cart-position-count-p-${productId}`;
+                productInCartCountPlaceElement.append(productPositionCountElement);
 
-            const productPositionChangeButtonsElement = document.createElement('div');
-            productPositionChangeButtonsElement.classList.add('product-in-cart-change-button');
+                const incrementButtonElement = document.createElement('button');
+                incrementButtonElement.textContent = '+';
+                incrementButtonElement.setAttribute('productId', productId);
+                incrementButtonElement.classList.add('increment-position-cart-button');
+                productInCartCountPlaceElement.append(incrementButtonElement);
 
-            const likePositionButtonElement = document.createElement('button');
-            likePositionButtonElement.classList.add('liked-position-button');
-            productPositionChangeButtonsElement.append(likePositionButtonElement);
+                newProductInCartElement.append(productInCartCountPlaceElement);
 
-            const deletePositionButtonElement = document.createElement('button');
-            deletePositionButtonElement.classList.add('delete-position-button');
-            deletePositionButtonElement.productid = productId;
-            productPositionChangeButtonsElement.append(deletePositionButtonElement);
+                const productPositionChangeButtonsElement = document.createElement('div');
+                productPositionChangeButtonsElement.classList.add('product-in-cart-change-button');
 
-            newProductInCartElement.append(productPositionChangeButtonsElement);
+                const likePositionButtonElement = document.createElement('button');
+                likePositionButtonElement.classList.add('liked-position-button');
+                likePositionButtonElement.setAttribute('data-js-liked-button', '')
+                if (!likedProducts.includes(productId)) {
+                    likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/liked_button_image.png)';
+                } else {
+                    likePositionButtonElement.style.backgroundImage = 'url(/static/StaticImages/active_liked_image.png)';
+                }
+    
 
-            addingProductBlock.append(newProductInCartElement);
-        }
+                likePositionButtonElement.setAttribute('productId', productId);
+                productPositionChangeButtonsElement.append(likePositionButtonElement);
+
+                const deletePositionButtonElement = document.createElement('button');
+                deletePositionButtonElement.classList.add('delete-position-button');
+                deletePositionButtonElement.setAttribute('productId', productId);
+                productPositionChangeButtonsElement.append(deletePositionButtonElement);
+
+                newProductInCartElement.append(productPositionChangeButtonsElement);
+
+                addingProductBlock.append(newProductInCartElement);
+            }
+        })
         this.shoppingCartProductContainerElement.append(addingProductBlock);
         this.shoppingCartPticeP.textContent = `${allPrice.toFixed(2)} р`;
+        sessionStorage.setItem('productCart', JSON.stringify(productCartData));
     }
 
 
@@ -177,17 +206,11 @@ export class ShoppingCart {
         const productCart = JSON.parse(sessionStorage.getItem('productCart'));
 
         if (Object.keys(productCart) == 0) {
+            createMessage("Корзина пуста.", "Для оформления заказа добавте один или несколько позиций в корзину!");
             return;
         }
 
-        const accessTokenJWT = localStorage.getItem('bearer');
-
-
-        if (accessTokenJWT === null) {
-            this.shoppingCartWindowElement.style.display = 'none';
-            this.shoppingCartProductContainerElement.replaceChildren();
-            this.userAccountWindowObj.showAccountExitForm();
-        }
+        window.location.href = `${window.location.origin}/site/new_order`;
     }
 
 }

@@ -21,14 +21,6 @@ async function initPage() {
     const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
 
 
-    const productId = window.location.href.split('/').pop();
-    const likerProducts = JSON.parse(localStorage.getItem('likedProducts'));
-    if (!likerProducts.includes(productId)) {
-        likeProductBtnElement.style.backgroundImage = 'url(/static/StaticImages/liked_button_image.png)'
-    } else {
-        likeProductBtnElement.style.backgroundImage = 'url(/static/StaticImages/active_liked_image.png)';
-    }
-
 
     if (sessionStorage.getItem('productCart') === null) {
         sessionStorage.setItem('productCart', JSON.stringify({}));
@@ -67,11 +59,6 @@ async function initPage() {
         else if (event.target.hasAttribute('data-js-liked-button')) {
             const productId = event.target.getAttribute('productId');
             likedProductsModalWindow.setLikedPosition(event.target, productId);
-         
-            if (event.target !== likeProductBtnElement) {
-                console.log(1);
-                likeProductBtnElement.style.backgroundImage = event.target.style.backgroundImage;
-            }
         }
     });
 }

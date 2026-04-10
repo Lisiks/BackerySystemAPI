@@ -15,14 +15,26 @@
 <body>
     <header>
         <div id="header-text-section">
-            <img src="{{ url_for('static', path='StaticImages/header_image.png')}}" alt="Изображение выпечки">
-            <h1>67 VKUSOV</h1>
-            <button type="button" id="shopping-cart-button"></button>
+
+            <div id="header-company-name-container">
+                <img src="{{ url_for('static', path='StaticImages/header_image.png')}}" alt="Изображение выпечки">
+                <h1>67 VKUSOV</h1>
+            </div>
+
+            <div id="header-navigate-buttons-container">
+                <button type="button" id="liked-products-button"></button>
+                <button type="button" id="shopping-cart-button"></button>
+                <button type="button" id="in-account-button"></button>
+            </div> 
         </div>
 
         <div id="header-menu-section">
-            {% block menu_links %}
-            {% endblock %}
+            {% for category in categories %}
+                <a target="_self" href="{{domain + 'site/catalog' + '#category-' + category['id'] | string }}">{{category['category_name']}}</a>
+            {% endfor %}
+            <a target="_self" href="{{domain + 'site/about/'}}">О компании</a>
+            <a target="_self" href="{{domain + 'site/faq/'}}">FAQ</a>
+            <a href="#footer-block">Контакты</a>
         </div>
     </header>
 
@@ -38,8 +50,9 @@
         <div id="footer-contacts">
             <div id="footer-contacts-info">
                 <h2>+7(999)-999-99-99</h2>
-                {% block branch_contacts %}
-                {% endblock %}
+                {% for branch in branches %}
+                    <p>{{ branch['branches_address'] }}, {{branch['branches_phone']}}</p>
+                {% endfor %}
                 <div id="footer-contacts-info-messangers">
                     <a href="https://vk.com/club237286675" target="_blank" id="vk-a"></a>
                     <a href="https://t.me/+c69XBY-xTfJhMTky" target="_blank" id="tg-a"></a>
@@ -47,13 +60,13 @@
                 </div>
             </div>
 
-            <form action="#" method="post" id="footer-contacts-form">
-                <input type="text" name="user-name" required maxlength="50" placeholder="Имя:">
-                <input type="email" name="user-email" required placeholder="Еmail:">
-                <input type="text" name="message-theme" required maxlength="100" placeholder="Тема сообщения:">
-                <textarea name="message-text" required></textarea>
-                <button type="submit">Отправить</button>
-            </form>
+            <div id="footer-contacts-form">
+                <input type="text" id="user-name-support" maxlength="50" placeholder="Имя:" readonly onfocus="this.removeAttribute('readonly')">
+                <input type="email" id="user-email-support" placeholder="Еmail:" readonly onfocus="this.removeAttribute('readonly')">
+                <input type="text" id="message-theme-support" maxlength="100" placeholder="Тема сообщения:" readonly onfocus="this.removeAttribute('readonly')">
+                <textarea id="message-text-support"></textarea>
+                <button type="button" id="send-support-mail-btn">Отправить</button>
+            </div>
 
         </div>
     </footer>

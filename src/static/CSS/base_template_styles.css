@@ -1,19 +1,19 @@
 @font-face {
     font-family: "Brusher";
-    src: url("../Fonts/Brusher.ttf");
+    src: url("/static/Fonts/Brusher.ttf");
     font-display: swap;
 }
 
 
 @font-face {
     font-family: "Istok Web";
-    src: url("../Fonts/IstokWeb-Regular.ttf");
+    src: url("/static/Fonts/IstokWeb-Regular.ttf");
     font-display: swap;
 }
 
 @font-face {
     font-family: "Wix Madefor Text";
-    src: url("../Fonts/WixMadeforDisplay-Regular.ttf");
+    src: url("/static/Fonts/WixMadeforDisplay-Regular.ttf");
     font-display: swap;
 }
 
@@ -66,43 +66,70 @@ header {
 
 
 #header-text-section {
-    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas: 
+        ". name navigate";
+    border-bottom: 2px solid var(--dark-brown-color);
 
+    
+}
+
+#header-company-name-container {
     display: flex;
-    flex-direction: row wrap;
-    justify-content: center;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+
+    grid-area: name;
 
     font-family: "Brusher";
     font-size: var(--h1-font-size);
     color: var(--dark-brown-color);
     letter-spacing: 2px;
-    border-bottom: 2px solid var(--dark-brown-color);
+    
 }
 
-#header-text-section > img {
+#header-company-name-container > img {
     width: calc(40px + 3vw);
 }
 
-#shopping-cart-button {
-    position: absolute;
-    right: 10px;
 
+#header-navigate-buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 15px;
+    grid-area: navigate;
+}
+
+#header-navigate-buttons-container > button {
     width: calc(20px + 3vw);
     height: calc(20px + 3vw);
-
     border: none;
     background-color: var(--header-background-color);
-    background-image: url("../StaticImages/shoping_card_button_image.png");
     background-position: center;
     background-size: cover;
-
     transition: var(--transition-settings);
 }
 
+#liked-products-button {
+    background-image: url("/static/StaticImages/liked_button_image.png"); 
+}
 
-#shopping-cart-button:hover {
+
+#shopping-cart-button {
+    background-image: url("/static/StaticImages/shoping_card_button_image.png"); 
+}
+
+
+#in-account-button {
+    background-image: url("/static/StaticImages/account_image.png"); 
+}
+
+
+#header-navigate-buttons-container > button:hover {
     transform: scale(1.2);
 }
 
@@ -198,15 +225,15 @@ footer > p, #footer-contacts-info > p {
 
 
 #vk-a {
-    background-image: url("../StaticImages/vk_image.png");
+    background-image: url("/static/StaticImages/vk_image.png");
 }
 
 #tg-a {
-    background-image: url("../StaticImages/tg_image.png");
+    background-image: url("/static/StaticImages/tg_image.png");
 }
 
 #whatsapp-a {
-    background-image: url("../StaticImages/vs_image.png");
+    background-image: url("/static/StaticImages/vs_image.png");
 }
 
 
@@ -275,40 +302,6 @@ footer > p, #footer-contacts-info > p {
 
 #footer-contacts-form > button:hover {
     transform: scale(1.05)
-}
-
-
-/*------------------------------------------------------------Боковая панель-----------------------------------------------------------*/
-
-
-#aside-block {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    z-index: 3;
-
-    width: 100vw;
-    height: 100vh;
-
-    background-color: rgba(0, 0, 0, 0.3);
-    transition: var(--transition-settings);
-}
-
-#aside-panel {
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    z-index: 4;
-
-    width: calc(250px + 15vw);
-    height: 100vh;
-
-    background-color: white;
-    transition: var(--transition-settings);
-}
-
-.hidden-block {
-    display: none;
 }
 
 

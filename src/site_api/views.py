@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
@@ -231,3 +233,45 @@ def send_support_message(user_author, theme, text, responce_email):
         server.starttls(context=context)
         server.login(settings.SUPPORT_EMAIL_ADDRESS, settings.SUPPORT_EMAIL_PASSWORD)
         server.send_message(new_message)
+
+
+def cancel_user_order(
+    user_id: int,
+    order_id: int,
+    session: Session,
+) -> OrderCancelResponseDTO:
+    order = session.scalar(
+        select(OrdersORM).where(
+            OrdersORM.id == order_id,
+            OrdersORM.user_id == user_id,
+        )
+    )
+
+    if order is None:
+        raise NoRecordError(f"No order with id={order_id} for user id={user_id}")
+
+    opened_status = session.scalar(
+        select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Открыт")
+    )
+    if opened_status is None:
+        raise NoRecordError("Order status 'Открыт' not found")
+
+    cancelled_status = session.scalar(
+        select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Отменён")
+    )
+    if cancelled_status is None:
+        raise NoRecordError("Order status 'Отменён' not found")
+
+    if order.status_id != opened_status.id:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Отменить можно только заказ со статусом 'Открыт'",
+        )
+
+    order.status_id = cancelled_status.id
+    session.commit()
+
+    return OrderCancelResponseDTO(
+        message="Заказ успешно отменён",
+        order_id=order.id,
+    )

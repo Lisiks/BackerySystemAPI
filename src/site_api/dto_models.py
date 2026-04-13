@@ -76,6 +76,11 @@ class UserOrderDTO(BaseModel):
     items: list[UserOrderItemDTO]
 
 
+class OrderCancelResponseDTO(BaseModel):
+    message: str
+    order_id: int = Field(gt=0)
+
+
 class SupportMessage(BaseModel):
     username: str = Field(max_length=50)
     user_email: EmailStr

@@ -30,7 +30,7 @@ def get_available_products():
     tags=["Заказы🧾"],
     name="Получить все заказы текущего пользователя",
     summary="При помощи данного запроса должно производиться получение всех заказов текущего пользователя "
-            "по access JWT токену.",
+            "по access JWT.",
     response_class=JSONResponse
 )
 def get_orders(
@@ -60,7 +60,7 @@ def get_orders(
     tags=["Заказы🧾"],
     name="Создать заказ",
     summary="При помощи данного запроса должно производиться создание нового заказа для текущего пользователя"
-            " по access JWT токену.",
+            " по access JWT.",
     response_model=OrderCreateResponseDTO,
     response_class=JSONResponse
 )
@@ -100,6 +100,43 @@ def post_order(
     except UnavaliableProducts as e:
         return JSONResponse(
             content={"message": "UnavaliableProduct", "products": e.args[0]},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
+        )
+
+
+@site_data_route.put(
+    path="/orders/cancel/{order_id}",
+    tags=["Заказы🧾"],
+    name="Отменить заказ",
+    summary="При помощи данного запроса должна производиться отмена заказа текущего пользователя по access JWT.",
+    response_model=OrderCancelResponseDTO,
+    response_class=JSONResponse
+)
+def cancel_order(
+    order_id: int,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    try:
+        access_token = credentials.credentials
+
+        with session_fabric() as session:
+            user = validate_access_token(access_token, session)
+            result = cancel_user_order(user.id, order_id, session)
+
+        return JSONResponse(
+            content=result.model_dump(),
+            status_code=status.HTTP_200_OK
+        )
+
+    except HTTPException as e:
+        return JSONResponse(
+            content={"message": "Ошибка валидации", "description": e.detail},
+            status_code=e.status_code
+        )
+
+    except NoRecordError as e:
+        return JSONResponse(
+            content={"message": "Ошибка отсутствующей записи", "description": e.args},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
 

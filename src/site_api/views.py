@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from src.database.database import session_fabric
 from src.database.orm_models import *
 from src.site_api.dto_models import *
@@ -92,6 +94,7 @@ def get_product_info_by_id(product_id):
             ProductsORM.protein,
             ProductsORM.fat,
             ProductsORM.carbs,
+
             CategoriesORM.category_name  #
         ).select_from(ProductsORM).join(ProductsORM.category).where(
             and_(
@@ -104,7 +107,6 @@ def get_product_info_by_id(product_id):
 
         orm_result = session.execute(query).all()
         return ProductsFullInfoDTO.model_validate(orm_result[0], from_attributes=True).dict() if len(orm_result) == 1 else None
-
 
 
 def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
@@ -163,6 +165,59 @@ def create_order(user_id: int, order_data: OrderAddDTO, session: Session):
 
         session.commit()
 
+        return {
+            "message": "Заказ успешно создан",
+            "order_id": new_order.id
+        }
+
+
+def get_user_orders(user_id: int, session: Session):
+    orders = session.execute(
+        select(OrdersORM)
+        .where(OrdersORM.user_id == user_id)
+        .order_by(OrdersORM.created_at.desc(), OrdersORM.id.desc())
+    ).scalars().all()
+
+    result = []
+
+    for order in orders:
+        branch = session.get(BranchesORM, order.branch_id)
+        status = session.get(OrderStatusesORM, order.status_id)
+
+        order_items_rows = session.execute(
+            select(OrderItemsORM, ProductsORM)
+            .join(ProductsORM, ProductsORM.id == OrderItemsORM.product_id)
+            .where(OrderItemsORM.order_id == order.id)
+        ).all()
+
+        items = [
+            UserOrderItemDTO(
+                product_id=product.id,
+                product_name=str(product.name),
+                quantity=order_item.quantity,
+                total_price=order_item.total_price,
+            )
+            for order_item, product in order_items_rows
+        ]
+
+        result.append(
+            UserOrderDTO(
+                id=order.id,
+                created_at=order.created_at,
+                order_datetime=order.order_datetime,
+                branch_id=order.branch_id,
+                branch_name=str(branch.branches_name) if branch else "",
+                branch_address=str(branch.branches_address) if branch else "",
+                status_id=order.status_id,
+                status_name=str(status.status_name) if status else "",
+                comment=order.comment,
+                total_amount=order.total_amount,
+                items=items,
+            ).model_dump(mode="json")
+        )
+
+    return result
+
 
 def send_support_message(user_author, theme, text, responce_email):
     new_message = EmailMessage()
@@ -180,6 +235,43 @@ def send_support_message(user_author, theme, text, responce_email):
         server.send_message(new_message)
 
 
+def cancel_user_order(
+    user_id: int,
+    order_id: int,
+    session: Session,
+) -> OrderCancelResponseDTO:
+    order = session.scalar(
+        select(OrdersORM).where(
+            OrdersORM.id == order_id,
+            OrdersORM.user_id == user_id,
+        )
+    )
 
+    if order is None:
+        raise NoRecordError(f"No order with id={order_id} for user id={user_id}")
 
+    opened_status = session.scalar(
+        select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Открыт")
+    )
+    if opened_status is None:
+        raise NoRecordError("Order status 'Открыт' not found")
 
+    cancelled_status = session.scalar(
+        select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Отменён")
+    )
+    if cancelled_status is None:
+        raise NoRecordError("Order status 'Отменён' not found")
+
+    if order.status_id != opened_status.id:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Отменить можно только заказ со статусом 'Открыт'",
+        )
+
+    order.status_id = cancelled_status.id
+    session.commit()
+
+    return OrderCancelResponseDTO(
+        message="Заказ успешно отменён",
+        order_id=order.id,
+    )

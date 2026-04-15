@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from src.config import settings
 from src.database.orm_models import UsersORM
 from src.login_api.dto_models import (RegisterUserRequestDTO, RegisterUserResponseDTO, AuthenticateUserRequestDTO,
-                                      AuthenticateUserResponseDTO, RefreshAccessTokenResponseDTO)
+                                      AuthenticateUserResponseDTO, RefreshAccessTokenResponseDTO, LogoutUserResponseDTO)
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -287,4 +287,12 @@ def refresh_access_token(
     )
 
 
+def logout_user(response: Response) -> LogoutUserResponseDTO:
+    response.delete_cookie(
+        key=settings.REFRESH_COOKIE_NAME,
+        path="/",
+    )
 
+    return LogoutUserResponseDTO(
+        message="Выход выполнен успешно",
+    )

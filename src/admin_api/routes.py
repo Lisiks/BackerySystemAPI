@@ -4,8 +4,6 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from src.errors import NoRecordError
-from src.database.database import session_fabric
 from src.admin_api.orders.views import *
 from src.admin_api.employees.dto_models import ( EmployeeAddAndUpdateDTO, AuthenticateEmployeeRequestDTO,
                                            AuthenticateEmployeeResponseDTO)
@@ -306,31 +304,6 @@ def change_order_status_route(change_order_data: OrderStatusChangeModel):
         return JSONResponse(content={"message": "ok"}, status_code=status.HTTP_200_OK)
     except NoRecordError as e:
         return JSONResponse(content={"message": f"{e.args[0]}"}, status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
-
-
-@admin_route.get(
-    path="/users/{user_id}/orders",
-    tags=["Заказы🧾"],
-    name="Получить заказы пользователя",
-    summary="При помощи данного запроса должно производиться получение всех заказов конкретного пользователя "
-            "для административного приложения.",
-    response_class=JSONResponse
-)
-def get_user_orders_route(
-    user_id: int,
-    session: Session = Depends(get_db),
-):
-    try:
-        orders = get_user_orders(user_id, session)
-        return JSONResponse(
-            content={"orders": orders},
-            status_code=status.HTTP_200_OK
-        )
-    except NoRecordError as e:
-        return JSONResponse(
-            content={"message": "No record error", "description": e.args},
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
-        )
 
 
 @admin_route.get(

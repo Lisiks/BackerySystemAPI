@@ -31,12 +31,6 @@ class ProductsFullInfoDTO(ProductsGetDTO):
     carbs: float = Field(ge=0)
     category_name: str = Field(max_length=100)
 
-class FavoriteProductAddDTO(BaseModel):
-    product_id: int = Field(gt=0)
-
-class MessageDTO(BaseModel):
-    message: str
-
 
 class OrderItemAddDTO(BaseModel):
     product_id: int = Field(gt=0)
@@ -57,12 +51,38 @@ class OrderCreateResponseDTO(BaseModel):
     order_id: int = Field(gt=0)
 
 
+class UserOrderItemDTO(BaseModel):
+    product_id: int = Field(gt=0)
+    product_name: str = Field(min_length=1)
+    quantity: int = Field(gt=0)
+    total_price: float = Field(ge=0)
+
+
+class UserOrderDTO(BaseModel):
+    id: int = Field(gt=0)
+    created_at: datetime
+    order_datetime: datetime
+
+    branch_id: int = Field(gt=0)
+    branch_name: str = Field(min_length=1)
+    branch_address: str = Field(min_length=1)
+
+    status_id: int = Field(gt=0)
+    status_name: str = Field(min_length=1)
+
+    comment: str | None = None
+    total_amount: float = Field(ge=0)
+
+    items: list[UserOrderItemDTO]
+
+
+class OrderCancelResponseDTO(BaseModel):
+    message: str
+    order_id: int = Field(gt=0)
+
+
 class SupportMessage(BaseModel):
     username: str = Field(max_length=50)
     user_email: EmailStr
     message_theme: str = Field(max_length=100)
     message_text: str
-
-
-
-

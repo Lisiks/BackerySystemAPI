@@ -65,9 +65,11 @@ class UsersORM(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+
     orders: Mapped['OrdersORM'] = relationship(
         back_populates="user"
     )
+
 
 class OrderStatusesORM(Base):
     __tablename__ = "order_statuses"

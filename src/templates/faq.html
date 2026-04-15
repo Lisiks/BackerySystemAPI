@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/user_profile.css') }}">
 {% endblock %}
 
 
@@ -54,6 +55,7 @@
     {% include '_account.html' %}
     {% include '_liked_products.html' %}
     {% include '_shopping_cart.html' %}
+    {% include '_user_profile.html' %}
 {% endblock %}
 
 {% block page_js %}

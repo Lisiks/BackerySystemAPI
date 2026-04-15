@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/order_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/user_profile.css') }}">
 {% endblock %}
 
 
@@ -56,6 +57,7 @@
 
 {% block page_windows %}
     {% include '_account.html' %}
+    {% include '_user_profile.html' %}
 {% endblock %}
 
 {% block page_js %}

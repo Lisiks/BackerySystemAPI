@@ -5,8 +5,9 @@ import bcrypt
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddAndUpdateDTO,
-                                                AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO)
+from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddDTO, EmployeeUpdateDTO,
+                                                AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO, 
+                                                )
 from src.database.orm_models import EmployeesORM, BranchesORM
 from src.errors import NoRecordError
 
@@ -40,7 +41,7 @@ def authenticate_employee(
     if not employee:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный логин или пароль",
+            detail="Неверный логин или пароль!!!!!!!!",
         )
 
     if not verify_employee_password(data.password, employee.password_hash):
@@ -104,7 +105,7 @@ def get_employee(employee_id: int, session: Session):
         work_address=str(branch.branches_address),
     ).model_dump(mode="json")
 
-def create_employee(new_employee: EmployeeAddAndUpdateDTO, session: Session):
+def create_employee(new_employee: EmployeeAddDTO, session: Session):
     new_employee_orm = EmployeesORM(
         full_name=new_employee.full_name,
         phone=new_employee.phone,
@@ -118,7 +119,7 @@ def create_employee(new_employee: EmployeeAddAndUpdateDTO, session: Session):
     session.commit()
 
 
-def update_employee(employee_id: int, current_employee: EmployeeAddAndUpdateDTO, session: Session):
+def update_employee(employee_id: int, current_employee: EmployeeUpdateDTO, session: Session):
     employee = session.get(EmployeesORM, employee_id)
     if employee is None:
         raise NoRecordError(f"No employee with id={employee_id}")
@@ -127,7 +128,7 @@ def update_employee(employee_id: int, current_employee: EmployeeAddAndUpdateDTO,
     employee.phone = current_employee.phone
     employee.position = current_employee.position
     employee.username = current_employee.username
-    employee.password_hash=hash_employee_password(current_employee.password)
+    #employee.password_hash=hash_employee_password(current_employee.password)
     employee.branch_id = current_employee.branch_id
 
     session.commit()

@@ -1,7 +1,7 @@
 #from src.database.database import Base
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
-from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text, create_engine
+from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text, create_engine, text
 
 class Base(DeclarativeBase):
     pass
@@ -16,7 +16,7 @@ class BranchesORM(Base):
     is_active_for_order: Mapped[bool] = mapped_column(nullable=False)
 
     orders: Mapped[list['OrdersORM']] = relationship(back_populates='branch')
-    employees: Mapped[list['Employee']] = relationship(back_populates='branch')
+    employees: Mapped[list['EmployeesORM']] = relationship(back_populates='branch')
 
 
 class CategoriesORM(Base):
@@ -146,14 +146,6 @@ class OrderItemsORM(Base):
     product: Mapped['ProductsORM'] = relationship(back_populates="order_products")
 
 
-class Employee(Base):
-    __tablename__ = "employee"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    branches_id: Mapped[int] = mapped_column(ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"))
-
-    branch: Mapped['BranchesORM'] = relationship(back_populates="employees")
-
 
 class EmployeesORM(Base):
     __tablename__ = "employees"
@@ -168,11 +160,6 @@ class EmployeesORM(Base):
         ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
         nullable=False
     )
+    branch: Mapped['BranchesORM'] = relationship(back_populates="employees")
 
 
-# Добавлять отдельно
-
-# engine = create_engine(DATABASE_URL, echo=True)
-
-# # Вариант 1: Создать только employees
-# Base.metadata.create_all(engine, tables=[EmployeesORM.__table__])

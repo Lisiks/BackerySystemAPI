@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from src.errors import NoRecordError
 from src.database.database import session_fabric
 from src.admin_api.orders.views import *
-from src.admin_api.employees.dto_models import ( EmployeeAddAndUpdateDTO, AuthenticateEmployeeRequestDTO,
+from src.admin_api.employees.dto_models import ( EmployeeAddDTO, EmployeeUpdateDTO, AuthenticateEmployeeRequestDTO,
                                            AuthenticateEmployeeResponseDTO)
 from src.admin_api.orders.dto_models import OrderStatusChangeModel
 from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
@@ -289,7 +289,7 @@ def put_product(
 def get_orders(employee_id: int = Path(gt=0)):
     try:
         result = get_all_orders_to_employee(employee_id)
-        return JSONResponse(content={"message": "ok", "orders": result}, status_code=status.HTTP_200_OK)
+        return JSONResponse(content={"orders": result}, status_code=status.HTTP_200_OK)
     except NoRecordError as e:
         return JSONResponse(content={"message": f"{e.args[0]}"}, status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
@@ -411,7 +411,7 @@ def authenticate_employee_route(
     response_class=JSONResponse
 )
 def post_employee(
-    new_employee: EmployeeAddAndUpdateDTO,
+    new_employee: EmployeeAddDTO,
     session: Session = Depends(get_db),
 ):
     try:
@@ -437,7 +437,7 @@ def post_employee(
 )
 def put_employee(
     employee_id: int,
-    current_employee: EmployeeAddAndUpdateDTO,
+    current_employee: EmployeeUpdateDTO,
     session: Session = Depends(get_db),
 ):
     try:

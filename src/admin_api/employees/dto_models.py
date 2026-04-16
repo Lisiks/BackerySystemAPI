@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 
-class EmployeeAddAndUpdateDTO(BaseModel):
+class EmployeeAddDTO(BaseModel):
     full_name: str = Field(min_length=1, max_length=255)
     phone: str = Field(min_length=1, max_length=30)
     position: str = Field(min_length=1, max_length=100)
@@ -9,6 +9,13 @@ class EmployeeAddAndUpdateDTO(BaseModel):
     password: str = Field(min_length=1, max_length=72)
     branch_id: int = Field(gt=0)
 
+class EmployeeUpdateDTO(BaseModel):
+    #id: int = Field(gt=0)
+    full_name: str = Field(min_length=1, max_length=255)
+    phone: str = Field(min_length=1, max_length=30)
+    position: str = Field(min_length=1, max_length=100)
+    username: str = Field(min_length=3, max_length=100)
+    branch_id: int = Field(gt=0)
 
 class EmployeeDTO(BaseModel):
     id: int = Field(gt=0)

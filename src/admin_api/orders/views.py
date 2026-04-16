@@ -10,7 +10,7 @@ from src.errors import NoRecordError
 
 def get_all_orders_to_employee(employee_id: int):
     with (session_fabric() as session):
-        current_employee = session.get(Employee, employee_id)
+        current_employee = session.get(EmployeesORM, employee_id)
         if not current_employee: raise NoRecordError(f"No employee with id={employee_id}")
 
         query = select(
@@ -20,7 +20,7 @@ def get_all_orders_to_employee(employee_id: int):
             selectinload(OrdersORM.branch),
             selectinload(OrdersORM.order_status)
         ).where(
-            OrdersORM.branch_id == current_employee.branches_id
+            OrdersORM.branch_id == current_employee.branch_id
         ).order_by(OrdersORM.created_at.desc())
         raw_result = session.execute(query).scalars().all()
 

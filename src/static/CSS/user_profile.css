@@ -33,10 +33,497 @@
     font-family: Arial, Helvetica, sans-serif;
     font-size: 50px;
     border-radius: 25px;
+    display: flex;
 
 
     animation-name: window-scaling;
     animation-duration: 0.3s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
+}
+
+
+.sidebar {
+    width: 300px;
+    padding: 20px;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+}
+
+.user-info {
+    /* Центрирование контента внутри user-info */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-name {
+    font-family: "Istok Web";
+    font-size: var(--h1-font-size);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.edit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    text-align: center;
+    font-family: "Wix Madefor Text", sans-serif;
+    border-radius: 15px;
+    transition: var(--transition-settings);
+    border: 1px solid #d8d8d8;
+}
+
+.edit-button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.edit-text {
+    font-size: var(--normal-font-size);
+    margin-right: 8px;
+    transition: var(--transition-settings);
+}
+
+.edit-icon {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--normal-browm-color);
+    transition: var(--transition-settings);
+}
+
+.edit-button:hover .edit-text {
+    color: var(--normal-browm-color);
+}
+
+
+.action-buttons {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: var(--transition-settings);
+    font-family: "Wix Madefor Text";
+    border-radius: 15px;
+    border: 1px solid #eee;
+    width: 100%;
+    max-width: 200px;
+}
+
+.action-button:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.action-button .action-text {
+    font-size: var(--normal-font-size);
+    transition: var(--transition-settings);
+}
+
+.action-button .exit-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    stroke: var(--normal-browm-color);
+    transition: var(--transition-settings);
+}
+
+.action-button:hover .action-text {
+    color: var(--normal-browm-color);
+}
+
+
+.delete-profile-button .action-text {
+    color: #e74c3c;
+}
+
+.delete-profile-button:hover .action-text {
+    color: #c0392b;
+}
+
+
+.action-button.exit-button {
+    border: 1px solid #eee;
+}
+.action-button.exit-button:hover {
+    background-color: #f0f0f0;
+}
+
+
+.action-button.delete-profile-button {
+    border: 1px solid #eee;
+}
+.action-button.delete-profile-button:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-title {
+    font-family: "Istok Web";
+    font-size: var(--h1-font-size);
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    padding: 5px;
+    max-width: calc(100% - 40px);
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.tab {
+    font-family: "Wix Madefor Text", "Istok Web";
+    font-size: var(--normal-font-size);
+    padding: 10px 20px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #999;
+    transition: var(--transition-settings);
+    flex-grow: 1;
+    position: relative;
+    text-align: center;
+    border-radius: 18px;
+}
+
+.tab.active {
+    background-color: var(--normal-browm-color);
+    border-radius: 20px;
+}
+
+.tab.active::after {
+    content: none;
+}
+
+.orders-section {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0px;
+    overflow: auto;
+    gap: 15px;
+}
+
+.active-orders-container, .history-orders-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+
+.history-orders-container {
+    display: none;
+}
+
+.order-card {
+    background-color: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 20px;
+    padding: 15px;
+    transition: var(--transition-settings);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.order-card:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.order-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.order-id {
+    font-family: "Wix Madefor Text";
+    font-size: var(--h2-font-size);
+    font-weight: bold;
+    color: #333;
+}
+
+.order-date {
+    font-family: "Istok Web", sans-serif;
+    font-size: var(--normal-font-size);
+    color: #888;
+    flex: 1; /* Позволяем блоку растягиваться и занимать оставшееся пространство */
+}
+
+.order-details {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+}
+
+.order-items {
+    flex-grow: 1;
+    margin-right: 15px;
+    max-width: calc(100% - 250px);
+    min-width: 200px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    font-family: "Wix Madefor Text", sans-serif;
+    font-size: var(--normal-font-size);
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.item-name {
+    font-weight: normal;
+}
+
+.item-price {
+    font-weight: bold;
+}
+
+.order-status-and-action {
+    display: flex;
+    align-items:center;
+
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 200px;
+    flex: 1; /* Позволяем блоку растягиваться */
+
+}
+
+.order-sum {
+    font-family: "Istok Web";
+    font-size: var(--h2-font-size);
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    margin-bottom: 0; /* Убираем нижний отступ */
+    margin-right: auto; /* Прижимаем к левому краю */
+    min-width: 80px;
+
+}
+
+.order-location {
+    font-family: "Wix Madefor Text", sans-serif;
+    font-size: var(--normal-font-size);
+    color: #888;
+    text-align: center; /* Центрируем текст */
+    flex: 1;
+}
+
+.order-current-status {
+    font-family: "Wix Madefor Text", sans-serif;
+    font-size: var(--normal-font-size);
+    color: #888;
+    text-align: center; /* Центрируем текст */
+    min-width: 100px;
+}
+
+.cancel-button {
+    font-family: "Wix Madefor Text", sans-serif;
+    font-size: var(--normal-font-size);
+    padding: 8px 15px;
+    background-color: var(--normal-browm-color);
+    color: #fff;
+    border: none;
+    border-radius: 20px; /* Радиус для кнопки отмены */
+    cursor: pointer;
+    transition: var(--transition-settings);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Легкая тень */
+    min-width: 100px;
+}
+
+.cancel-button:hover {
+    background-color: #a88562;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.cancel-button:disabled {
+    opacity: 60%;
+    cursor: not-allowed;
+}
+
+/* Стили для неактивной кнопки отмены */
+.order-card .order-current-status:not(:contains('Оформлен')) + .cancel-button,
+.order-card .order-current-status:not(:contains('Оформлен')) ~ .cancel-button {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Скрываем кнопку отмены в карточках из истории */
+.history-orders-container .order-card .cancel-button {
+    display: none;
+}
+
+/* Стили для карточек в истории */
+.history-orders-container .order-card {
+    background-color: #fefefe; /* Чуть более светлый фон */
+    border: 1px solid #e0e0e0; /* Более светлая граница */
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.02); /* Внутренняя тень */
+}
+
+/* Стили для шрифтов, которые должны быть "Istok Web" */
+.user-name {
+    font-family: "Istok Web", sans-serif;
+}
+
+
+/* Улучшение отображения вкладки "Активные" */
+.tab.active {
+    background-color: var(--normal-browm-color);
+    color: #fff; /* Цвет шрифта активной вкладки - белый, чтобы контрастировать */
+}
+
+.tab.active::after {
+    background-color: #fff; /* Цвет линии под активной вкладкой */
+}
+
+/* Убираем тень и фон для неактивных вкладок */
+.tab:not(.active) {
+    background-color: transparent;
+    color: #999;
+    box-shadow: none;
+}
+
+
+
+
+
+.order-details-dropdown {
+    width: 100%; /* Полная ширина карточки */
+    background-color: #ffffff; /* Белый цвет подплашки */
+    border-radius: 20px; /* Радиус */
+    overflow: hidden; /* Чтобы контент не вылезал за границы */
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; /* Плавное появление/исчезновение */
+    max-height: 0; /* Изначально скрыта */
+    padding: 0; /* Изначально без отступа */
+    box-shadow: inset 0 4px 8px rgba(0,0,0,0.05); /* Внутренняя тень для объема */
+}
+
+/* Контейнер контента внутри подплашки */
+.order-details-dropdown .dropdown-content {
+    padding: 15px;
+    padding-top: 0px;
+    border-top: 1px solid #eee; /* Разделительная линия */
+}
+
+.order-details-dropdown .dropdown-title {
+    font-family: "Wix Madefor Text", sans-serif;
+    font-size: var(--normal-font-size);
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    display: block; /* Чтобы занимал всю ширину */
+}
+
+.order-details-dropdown .dropdown-item-list {
+    margin-bottom: 15px; /* Отступ после списка товаров */
+}
+
+.order-details-dropdown .order-item {
+    margin-bottom: 5px;
+    font-family: "Wix Madefor Text", sans-serif; /* Шрифт для деталей */
+    font-size: var(--normal-font-size);
+}
+
+.order-details-dropdown .item-name {
+    font-weight: normal;
+}
+
+.order-details-dropdown .item-price {
+    font-weight: bold;
+}
+
+.order-details-dropdown .dropdown-address {
+    font-family: "Wix Madefor Text", sans-serif;
+}
+
+.order-details-dropdown .address-text {
+    font-size: var(--normal-font-size);
+    color: #888;
+    margin: 5px 0 0 0; /* Убираем лишние отступы у параграфа */
+}
+
+/* Класс, который делает подплашку видимой */
+.order-card.expanded .order-details-dropdown {
+    max-height: 300px; /* Устанавливаем максимальную высоту, чтобы контент поместился */
+    padding: 15px; /* Добавляем отступ, когда подплашка открыта */
+}
+
+
+
+/* Дополнительная стилизация для кнопки, которая открывает/закрывает подплашку */
+.order-card .order-header {
+    cursor: pointer; /* Делаем заголовок кликабельным */
+}
+
+.order-card:hover {
+    background-color: rgba(200, 200, 200, 0.05); /* Легкий фон при наведении */
 }

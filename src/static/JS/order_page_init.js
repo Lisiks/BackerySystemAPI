@@ -10,7 +10,7 @@ class OrderPage {
     constructor() {
         this.exitAccountWindow = new UserAccountExitWindow();
         this.emailForm = new EmailForm();
-        this.userProfile = new UserProfile();
+        this.userProfile = new UserProfile(this.exitAccountWindow);
 
     
         this.userNameElement = document.getElementById('order-name');

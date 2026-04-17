@@ -13,7 +13,7 @@ async function pageInit() {
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const likedProductsModalWindow = new LikedProductCirtain();
     const emailForm = new EmailForm();
-    const userProfile = new UserProfile();
+    const userProfile = new UserProfile(exitAcciuntWindow);
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
     const openLikedProductsBtn = document.getElementById('liked-products-button');

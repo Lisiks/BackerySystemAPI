@@ -250,25 +250,14 @@ def cancel_user_order(
     if order is None:
         raise NoRecordError(f"No order with id={order_id} for user id={user_id}")
 
-    opened_status = session.scalar(
-        select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Открыт")
-    )
-    if opened_status is None:
-        raise NoRecordError("Order status 'Открыт' not found")
 
-    cancelled_status = session.scalar(
-        select(OrderStatusesORM).where(OrderStatusesORM.status_name == "Отменён")
-    )
-    if cancelled_status is None:
-        raise NoRecordError("Order status 'Отменён' not found")
-
-    if order.status_id != opened_status.id:
+    if order.status_id != 1:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Отменить можно только заказ со статусом 'Открыт'",
         )
 
-    order.status_id = cancelled_status.id
+    order.status_id = 5
     session.commit()
 
     return OrderCancelResponseDTO(

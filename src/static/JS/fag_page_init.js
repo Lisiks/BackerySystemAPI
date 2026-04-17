@@ -12,7 +12,7 @@ async function initPage() {
     const likedProductsModalWindow = new LikedProductCirtain();
     const addingProductModalWindow = new AddProductWindow();
     const emailForm = new EmailForm();
-    const userProfile = new UserProfile();
+    const userProfile = new UserProfile(exitAcciuntWindow);
   
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
@@ -50,7 +50,6 @@ async function initPage() {
     });
 
     openProfileBtn.addEventListener('click', () => {
-        console.log(1);
         userProfile.openUserProfile();
     });
 

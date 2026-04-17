@@ -42,9 +42,10 @@ def get_orders(
         with session_fabric() as session:
             user = validate_access_token(access_token, session)
             orders = get_user_orders(user.id, session)
+            username = user.username
 
         return JSONResponse(
-            content={"orders": orders},
+            content={"orders": orders, "username": username},
             status_code=status.HTTP_200_OK
         )
 

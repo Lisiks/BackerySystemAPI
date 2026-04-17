@@ -13,12 +13,11 @@ async function initPage() {
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const likedProductsModalWindow = new LikedProductCirtain();
     const emailForm = new EmailForm();
-    const userProfile = new UserProfile();
+    const userProfile = new UserProfile(exitAcciuntWindow);
     
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
     const openLikedProductsBtn = document.getElementById('liked-products-button');
-    const likeProductBtnElement = document.getElementById('liked-button');
     const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
     const openProfileBtn = document.getElementById('in-account-button');
 

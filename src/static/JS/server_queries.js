@@ -18,7 +18,56 @@ export async function resfreshAccessToken() {
         return true;
     }
     return false;
+}
 
+export async function exitAccount() {
+    localStorage.removeItem('bearer');
+    fetch(
+        `${window.location.origin}/site/login/logout`,
+         {
+            method: "POST",
+            headers:  {'Content-Type': 'application/json'}
+         }
+    );
+}
+
+export async function loadUserOrders(recAttemp=0) {
+    if (recAttemp > 3) return "ToManyAttemp";
+    const accessToken = localStorage.getItem("bearer");
+
+    try {
+        const responcePromise = await fetch(
+            `${window.location.origin}/sitedata/orders`,
+            {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        switch (responcePromise.status) {
+            case 401: {
+                localStorage.removeItem('bearer');
+                for(const i = 1; i < 4; i++) {
+                    if (await resfreshAccessToken()) break;
+                }
+
+                if (localStorage.getItem("bearer")) {
+                    return loadUserOrders(recAttemp+1);
+                } 
+
+                return "AuthError";
+            }
+            case 200: {
+                return await responcePromise.json();
+            }
+        }
+    } catch (error) {
+        return "NetWorkError";
+    }
+    
+    
 }
 
 export async function createOrder(username, phone, productArray, selectedBranchId, commentStr, fullOrderDateStr, recAttemp=0) {
@@ -82,6 +131,52 @@ export async function createOrder(username, phone, productArray, selectedBranchI
         return "NetWorkError";
     }
 }
+
+
+export async function cancelOrder(orderId, recAttemp=0) {
+    if (recAttemp > 3) return "ToManyAttempts";
+
+    const accessToken = localStorage.getItem('bearer');
+
+    try {
+        const cancelResult = await fetch(
+            `${window.location.origin}/sitedata/orders/cancel/${orderId}`,
+            {
+                method: "PUT",
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        switch (cancelResult.status) {
+            case 401: {
+                localStorage.removeItem('bearer');
+                for(const i = 1; i < 4; i++) {
+                    if (await resfreshAccessToken()) break;
+                }
+                if (localStorage.getItem("bearer")) {
+                    return cancelOrder(orderId, recAttemp+1);
+                } else {
+                    return "AuthError";
+                }
+                break;
+            }
+            case 422: {
+                return "IncorrectOrderError";
+            }
+            default: {
+                return "success";
+            }
+        }
+
+
+    } catch (error) {
+        return "NetworkError";
+    }
+}
+
 
 export async function sendSupportMail(userName, userEmail, mailTheme, mailText) {
     try {

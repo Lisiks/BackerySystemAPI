@@ -161,11 +161,20 @@ class EmployeesORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     phone: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
-    position: Mapped[str] = mapped_column(String(100), nullable=False)
     username: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     branch_id: Mapped[int] = mapped_column(
         ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
         nullable=False
     )
+    position_id: Mapped[int] = mapped_column(
+        ForeignKey("positions.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False
+    )
 
+
+class PositionsORM(Base):
+    __tablename__ = "positions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    position_name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)

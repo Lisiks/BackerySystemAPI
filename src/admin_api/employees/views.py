@@ -5,9 +5,9 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddAndUpdateDTO,
+from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddAndUpdateDTO, PositionDTO,
                                                 AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO)
-from src.database.orm_models import EmployeesORM, BranchesORM
+from src.database.orm_models import EmployeesORM, BranchesORM, PositionsORM
 from src.errors import NoRecordError
 
 
@@ -67,14 +67,19 @@ def get_all_employees(session: Session):
         if branch is None:
             raise NoRecordError(f"No branch with id={employee.branch_id}")
 
+        position = session.get(PositionsORM, employee.position_id)
+        if position is None:
+            raise NoRecordError(f"No position with id={employee.position_id}")
+
         result.append(
             EmployeeDTO(
                 id=employee.id,
-                full_name=employee.full_name,
-                phone=employee.phone,
-                position=employee.position,
-                username=employee.username,
+                full_name=str(employee.full_name),
+                phone=str(employee.phone),
+                username=str(employee.username),
                 branch_id=employee.branch_id,
+                position_id=employee.position_id,
+                position_name=str(position.position_name),
                 work_address=str(branch.branches_address),
             ).model_dump(mode="json")
         )
@@ -91,27 +96,41 @@ def get_employee(employee_id: int, session: Session):
     if branch is None:
         raise NoRecordError(f"No branch with id={employee.branch_id}")
 
+    position = session.get(PositionsORM, employee.position_id)
+    if position is None:
+        raise NoRecordError(f"No position with id={employee.position_id}")
+
     employee_id_value = getattr(employee, "id")
     branch_id_value = getattr(employee, "branch_id")
+    position_id_value = getattr(employee, "position_id")
 
     return EmployeeDTO(
         id=employee_id_value,
         full_name=str(employee.full_name),
         phone=str(employee.phone),
-        position=str(employee.position),
+        position_id=position_id_value,
+        position_name=str(position.position_name),
         username=str(employee.username),
         branch_id=branch_id_value,
         work_address=str(branch.branches_address),
     ).model_dump(mode="json")
 
 def create_employee(new_employee: EmployeeAddAndUpdateDTO, session: Session):
+    branch = session.get(BranchesORM, new_employee.branch_id)
+    if branch is None:
+        raise NoRecordError(f"No branch with id={new_employee.branch_id}")
+
+    position = session.get(PositionsORM, new_employee.position_id)
+    if position is None:
+        raise NoRecordError(f"No position with id={new_employee.position_id}")
+
     new_employee_orm = EmployeesORM(
         full_name=new_employee.full_name,
         phone=new_employee.phone,
-        position=new_employee.position,
         username=new_employee.username,
         password_hash=hash_employee_password(new_employee.password),
         branch_id=new_employee.branch_id,
+        position_id=new_employee.position_id,
     )
 
     session.add(new_employee_orm)
@@ -123,12 +142,19 @@ def update_employee(employee_id: int, current_employee: EmployeeAddAndUpdateDTO,
     if employee is None:
         raise NoRecordError(f"No employee with id={employee_id}")
 
+    branch = session.get(BranchesORM, current_employee.branch_id)
+    if branch is None:
+        raise NoRecordError(f"No branch with id={current_employee.branch_id}")
+
+    position = session.get(PositionsORM, current_employee.position_id)
+    if position is None:
+        raise NoRecordError(f"No position with id={current_employee.position_id}")
+
     employee.full_name = current_employee.full_name
     employee.phone = current_employee.phone
-    employee.position = current_employee.position
     employee.username = current_employee.username
-    employee.password_hash=hash_employee_password(current_employee.password)
     employee.branch_id = current_employee.branch_id
+    employee.position_id = current_employee.position_id
 
     session.commit()
 
@@ -140,3 +166,14 @@ def delete_employee(employee_id: int, session: Session):
 
     session.delete(employee)
     session.commit()
+
+
+def get_all_positions(session: Session):
+    orm_result = session.execute(
+        select(PositionsORM).order_by(PositionsORM.id.asc())
+    ).scalars().all()
+
+    return [
+        PositionDTO.model_validate(position, from_attributes=True).model_dump(mode="json")
+        for position in orm_result
+    ]

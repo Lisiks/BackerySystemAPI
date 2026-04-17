@@ -9,7 +9,7 @@ from src.admin_api.employees.dto_models import ( EmployeeAddAndUpdateDTO, Authen
                                            AuthenticateEmployeeResponseDTO)
 from src.admin_api.orders.dto_models import OrderStatusChangeModel
 from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
-                                           delete_employee, authenticate_employee)
+                                           get_all_positions, delete_employee, authenticate_employee)
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -347,6 +347,23 @@ def get_employee_route(
             content={"message": "No record error", "description": e.args},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
+
+@admin_route.get(
+    path="/positions",
+    tags=["Сотрудники👥"],
+    name="Получить данные обо всех должностях",
+    summary="При помощи данного запроса должно производиться получение данных обо всех должностях для формы сотрудников административного приложения.",
+    response_class=JSONResponse
+)
+def get_positions(
+    session: Session = Depends(get_db),
+):
+    positions = get_all_positions(session)
+    return JSONResponse(
+        content={"positions": positions},
+        status_code=status.HTTP_200_OK
+    )
 
 
 @admin_route.post(

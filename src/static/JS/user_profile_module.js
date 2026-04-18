@@ -78,6 +78,8 @@ export class UserProfile {
                     this.userNameElement.textContent = orderQueryResult.username;
                     this.fillClientOrders(orderQueryResult.orders);
                     this.userProfileWindow.style.display = 'flex';
+                    this.activeOrdersContainer.style.display = 'flex';
+                    this.historyOrdersContainer.style.display = 'none';
                     this.activeOrderSectionBtn.classList.add('active');
                     this.historyOrderSectionBtn.classList.remove('active');
                 }

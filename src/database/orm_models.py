@@ -1,8 +1,10 @@
-from src.database.database import Base
+#from src.database.database import Base
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
+from sqlalchemy import ForeignKey, String, Boolean, DateTime, Text, create_engine, text
 
+class Base(DeclarativeBase):
+    pass
 
 
 class BranchesORM(Base):
@@ -144,6 +146,7 @@ class OrderItemsORM(Base):
 
     order: Mapped['OrdersORM'] = relationship(back_populates="products")
     product: Mapped['ProductsORM'] = relationship(back_populates="order_products")
+
 
 
 class EmployeesORM(Base):

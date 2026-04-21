@@ -1,3 +1,5 @@
+import {createMessage} from "./messages.js"
+
 export class ShoppingCart {
     constructor(userAccountWindowObj) {
         this.shoppingCartWindowElement = document.getElementById('black-shopping-cart-bg');
@@ -204,17 +206,11 @@ export class ShoppingCart {
         const productCart = JSON.parse(sessionStorage.getItem('productCart'));
 
         if (Object.keys(productCart) == 0) {
+            createMessage("Корзина пуста.", "Для оформления заказа добавте один или несколько позиций в корзину!");
             return;
         }
 
-        const accessTokenJWT = localStorage.getItem('bearer');
-
-
-        if (accessTokenJWT === null) {
-            this.shoppingCartWindowElement.style.display = 'none';
-            this.shoppingCartProductContainerElement.replaceChildren();
-            this.userAccountWindowObj.showAccountExitForm();
-        }
+        window.location.href = `${window.location.origin}/site/new_order`;
     }
 
 }

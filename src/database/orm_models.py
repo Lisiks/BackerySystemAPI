@@ -67,9 +67,11 @@ class UsersORM(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+
     orders: Mapped['OrdersORM'] = relationship(
         back_populates="user"
     )
+
 
 class OrderStatusesORM(Base):
     __tablename__ = "order_statuses"
@@ -153,13 +155,21 @@ class EmployeesORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     phone: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
-    position: Mapped[str] = mapped_column(String(100), nullable=False)
     username: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     branch_id: Mapped[int] = mapped_column(
         ForeignKey("branches.id", ondelete="RESTRICT", onupdate="CASCADE"),
         nullable=False
     )
-    branch: Mapped['BranchesORM'] = relationship(back_populates="employees")
+    branch: Mapped["BranchesORM"] = relationship(back_populates="employees")
+    position_id: Mapped[int] = mapped_column(
+        ForeignKey("positions.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False
+    )
 
 
+class PositionsORM(Base):
+    __tablename__ = "positions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    position_name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)

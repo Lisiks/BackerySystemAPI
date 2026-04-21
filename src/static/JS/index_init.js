@@ -3,6 +3,8 @@ import { AddProductWindow } from "./add_product_module.js"
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
 import { LikedProductCirtain } from "./liked_products_module.js"
+import { EmailForm} from "./email_message_module.js"
+import { UserProfile } from "./user_profile_module.js"
 
 async function pageInit() {
 
@@ -10,9 +12,14 @@ async function pageInit() {
     const addingProductModalWindow = new AddProductWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const likedProductsModalWindow = new LikedProductCirtain();
+    const emailForm = new EmailForm();
+    const userProfile = new UserProfile(exitAcciuntWindow);
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
     const openLikedProductsBtn = document.getElementById('liked-products-button');
+    const openProfileBtn = document.getElementById('in-account-button');
+
+    const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
 
 
     if (sessionStorage.getItem('productCart') === null) {
@@ -86,6 +93,12 @@ async function pageInit() {
     openLikedProductsBtn.addEventListener('click', () => {
         likedProductsModalWindow.openWindow();
     });
+
+    openProfileBtn.addEventListener('click', () => {
+        userProfile.openUserProfile();
+    });
+
+    sendSupportEmailBtn.addEventListener('click', emailForm.sendMessage);
 
     
     document.addEventListener('click', (event) => {

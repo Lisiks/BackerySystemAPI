@@ -11,38 +11,43 @@
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/curtain_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/user_profile.css') }}">
 {% endblock %}
 
 
+
+
 {% block content %}
-<div id="content">
-    <div id="photo-section">
-        <img src="{{ product['image_url'] }}" alt="Фото 1">
-    </div>
-     
-    <div class="text-section">
-        <h2>{{ product['name'] }}</h2>
-
-        <p class="istok-web"><b>{{ product['sale_price'] }} р</b>&nbsp&nbsp&nbsp<span class="gray-text">{{ product['weight'] }} г</span></p>
-        <p class="wix-madefor-text"><span class="gray-text">{{ product['category_name'] }}</span></p>
-
-        <div id="product-activity-buttons">
-            <button type="button" class="in-cart-button" productId="{{ product['id'] }}" data-js-in-cart-button>Добавить в корзину</button>
-            <button type="button" id="liked-button" productId="{{ product['id'] }}" style="background-image: none;" data-js-liked-button></button>
+    <div class="content">
+        <div id="photo-section">
+            <img src="{{ product['image_url'] }}" alt="Фото 1">
         </div>
 
-        <p class="gray-underline wix-madefor-text">Описание: {{ product['description'] }}</p>
-         
-        <p class="gray-underline wix-madefor-text">Состав: {{ product['composition'] }}</p>
-           
-        <div class="text-section-energy gray-underline wix-madefor-text">Энергетическая ценность:
-            <p>Белков — {{ product['protein'] }} г</p>
-            <p>Жиров — {{ product['fat'] }} г</p>
-            <p>Углеводов — {{ product['carbs'] }} г</p>
-            <p>Калорийность — {{ product['calories'] }} ккал</p>
+        <div class="text-section">
+            <h2>{{ product['name'] }}</h2>
+
+            <p class="istok-web"><b>{{ product['sale_price'] }} р</b>&nbsp&nbsp&nbsp<span class="gray-text">{{ product['weight'] }} г</span></p>
+            <p class="wix-madefor-text"><span class="gray-text">{{ product['category_name'] }}</span></p>
+
+            <div id="product-activity-buttons">
+                <button type="button" class="in-cart-button" productId="{{ product['id'] }}" data-js-in-cart-button>Добавить в корзину</button>
+                <button type="button" id="liked-button" productId="{{ product['id'] }}" style="background-image: none;" data-js-liked-button></button>
+            </div>
+
+            <p class="gray-underline wix-madefor-text">Описание: {{ product['description'] }}</p>
+
+            <p class="gray-underline wix-madefor-text">Состав: {{ product['composition'] }}</p>
+
+            <div class="text-section-energy gray-underline wix-madefor-text">Энергетическая ценность:
+                <p>Белков — {{ product['protein'] }} г</p>
+                <p>Жиров — {{ product['fat'] }} г</p>
+                <p>Углеводов — {{ product['carbs'] }} г</p>
+                <p>Калорийность — {{ product['calories'] }} ккал</p>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 
@@ -53,6 +58,7 @@
     {% include '_shopping_cart.html' %}
     {% include '_account.html' %}
     {% include '_liked_products.html' %}
+    {% include '_user_profile.html' %}
 {% endblock %}
 
 {% block page_js %}

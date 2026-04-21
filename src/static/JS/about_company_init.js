@@ -3,19 +3,26 @@ import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
 import { LikedProductCirtain } from "./liked_products_module.js"
 import { AddProductWindow } from "./add_product_module.js"
+import { EmailForm} from "./email_message_module.js"
+import { UserProfile } from "./user_profile_module.js"
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const likedProductsModalWindow = new LikedProductCirtain();
     const addingProductModalWindow = new AddProductWindow();
+    const emailForm = new EmailForm();
+    const userProfile = new UserProfile(exitAcciuntWindow);
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
     const openLikedProductsBtn = document.getElementById('liked-products-button');
+    const openProfileBtn = document.getElementById('in-account-button');
+  
 
     const nextPhotoSliderBtnElement = document.getElementById('next-slider-button');
     const lastPhotoSliderBtnElement = document.getElementById('last-slider-button');
     const sliderImgElement = document.getElementById('slider=content-ing');
+    const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
 
     const imageArray = ["/static/StaticImages/abci1.png", "/static/StaticImages/abci2.png", "/static/StaticImages/abci3.jpg"];
     let currentSliderImg = 0;
@@ -47,6 +54,12 @@ async function initPage() {
     openLikedProductsBtn.addEventListener('click', () => {
         likedProductsModalWindow.openWindow();
     });
+
+    openProfileBtn.addEventListener('click', () => {
+        userProfile.openUserProfile();
+    });
+
+    sendSupportEmailBtn.addEventListener('click', emailForm.sendMessage);
 
     nextPhotoSliderBtnElement.addEventListener('click', () => {
         currentSliderImg = currentSliderImg === imageArray.length - 1 ? 0 : currentSliderImg + 1;

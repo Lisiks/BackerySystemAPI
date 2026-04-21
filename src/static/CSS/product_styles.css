@@ -1,9 +1,11 @@
 
 /* Основной контейнер */
-#content {
+.content {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px; /* Отступ между фото и текстом */
+  margin: 20px 10vw;
+
 }
 
 /* Левая секция с фото - 45% */

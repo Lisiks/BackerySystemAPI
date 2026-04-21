@@ -1,3 +1,6 @@
+import { createMessage } from "./messages.js"
+import { LoadingWindow } from "./load_window_module.js"
+
 export class UserAccountExitWindow {
 
     constructor() {
@@ -41,7 +44,26 @@ export class UserAccountExitWindow {
         this.authNameInputElement.addEventListener('focus', () => {this.authNameErrorMsgElement.style.display = "none"});
         this.authPasswordInputElement.addEventListener('focus', () => {this.authPasswordErrorMsgElement.style.display = "none"});
 
-        this.addAllFormListeners();
+        this.toAuthWindowBtn.addEventListener('click', () => {
+            this.regWindowElement.style.display = 'none';
+            this.authWindowElement.style.display = 'flex';
+        });
+
+
+        this.toRegWindowBtn.addEventListener('click', () => {
+            this.authWindowElement.style.display = 'none';
+            this.regWindowElement.style.display = 'flex';
+        });
+
+
+        this.accountWindowElement.addEventListener('click', (event) => {
+            if (event.target == this.accountWindowElement) {
+                this.hideAccountExitForm();
+            }
+        });
+
+        this.registerBtnElement.addEventListener('click', this.register);
+        this.loginBtnElement.addEventListener('click', this.login);
     }
 
     showAccountExitForm() {
@@ -76,30 +98,13 @@ export class UserAccountExitWindow {
 
 
 
-    swithFormToLogin = () => {
-        this.regWindowElement.style.display = 'none';
-        this.authWindowElement.style.display = 'flex';
-    }
-
-    swithFromToRegister = () => {
-        this.authWindowElement.style.display = 'none';
-        this.regWindowElement.style.display = 'flex';
-    }
-
-
-
-    exitOnBgClick = (event) => {
-        if (event.target == this.accountWindowElement) {
-            this.hideAccountExitForm();
-        }
-    }
-
     showErrorLabel(label, message) {
         label.textContent = message;
         label.style.display = 'block';
     }
 
     register = async (event) => {
+        const loadWindow = new LoadingWindow();
     
         const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
             
@@ -109,121 +114,120 @@ export class UserAccountExitWindow {
 
         if (userName.length < 3 || userName.length > 50) {
             this.showErrorLabel(this.regNameErrorMsgElement, 'Некорректная длина имени пользователя (необходимая длина от 3 до 50 символов)');
+            loadWindow.deleteWindow();
             return;
         }
 
         if (!emailRegex.test(userEmail)) {
             this.showErrorLabel(this.regEmailErrorMsgElement, 'Некорректный формат email');
+            loadWindow.deleteWindow();
             return;
         }
 
         if (userPwd.length < 8 || userPwd.length > 72) {
             this.showErrorLabel(this.regPasswordErrorMsgElement, 'Некорректная длина пароля (необходимая длина от 8 до 72 символов)');
+            loadWindow.deleteWindow();
             return;
         }
-        this.removeAllFormListeners();
 
         if (!this.regAccuredCHeckBElement.checked) {
             this.showErrorLabel(this.regAccuredErrorMsgElement, 'Поставте галочку для продолжения');
+            loadWindow.deleteWindow();
             return;
         }
 
-        const rawResult = await fetch(
-            `${window.location.origin}/site/login/register`, {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "email": userEmail,
-                    "username": userName,
-                    "password": userPwd
-                })
-            }
-        );
-        const result = await rawResult.json();
-        
-        switch (rawResult.status) {
-            case 409:
-                switch (result.detail) {
-                case "Пользователь с таким логином уже существует":
-                    this.showErrorLabel(this.regNameErrorMsgElement, 'Пользователь с данным именем уже существует');
-                    break;
-                case "Пользователь с такой почтой уже существует":
-                    this.showErrorLabel(this.regEmailErrorMsgElement, 'Пользователь с данным email уже существует');
-                    break; 
+        try {
+            const rawResult = await fetch(
+                `${window.location.origin}/site/login/register`, {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "email": userEmail,
+                        "username": userName,
+                        "password": userPwd
+                    })
                 }
-                break;
-            case 201:
-                localStorage.setItem('bearer', result.access_token);
-                this.hideAccountExitForm();
+            );
+            const result = await rawResult.json();
+            
+            switch (rawResult.status) {
+                case 409:
+                    switch (result.detail) {
+                    case "Пользователь с таким логином уже существует":
+                        this.showErrorLabel(this.regNameErrorMsgElement, 'Пользователь с данным именем уже существует');
+                        break;
+                    case "Пользователь с такой почтой уже существует":
+                        this.showErrorLabel(this.regEmailErrorMsgElement, 'Пользователь с данным email уже существует');
+                        break; 
+                    }
+                    break;
+                case 201:
+                    localStorage.setItem('bearer', result.access_token);
+                    this.hideAccountExitForm();
+                    createMessage("Регистрация прошла успешно.", "Теперь вы можете создавать и просматривать собственные заказы.");
+            }
+        } catch (error) {
+            createMessage("Не удалось создать заказ.", "Возможно, у вас проблемы с подключением к сети интернет.");
         }
-        this.addAllFormListeners();
+        loadWindow.deleteWindow();
+
     }
 
-    login = async(event) => { 
+    login = async(event) => {
+        const loadWindow = new LoadingWindow();
         const userName = this.authNameInputElement.value;
         const userPwd = this.authPasswordInputElement.value;
 
         if (userName.length < 3 || userName.length > 72) {
             this.showErrorLabel(this.authNameErrorMsgElement, 'Некорректная длина имени пользователя (необходимая длина от 3 до 50 символов)');
+            loadWindow.deleteWindow();
             return;
         }
 
         if (userPwd.length < 8 || userPwd.length > 72) {
             this.showErrorLabel(this.authPasswordErrorMsgElement, 'Некорректная длина пароля (необходимая длина от 8 до 72 символов)');
+            loadWindow.deleteWindow();
             return;
         }
-        this.removeAllFormListeners();    
+  
+        try {
+            const rawResult = await fetch(
+                `${window.location.origin}/site/login/authenticate`, {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "username": userName,
+                        "password": userPwd
+                    })
+                }
+            );
 
-        const rawResult = await fetch(
-            `${window.location.origin}/site/login/authenticate`, {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "username": userName,
-                    "password": userPwd
-                })
-            }
-        );
+            const result = await rawResult.json();
 
-        const result = await rawResult.json();
-
-        switch (rawResult.status) {
-            case 401: {
-                this.showErrorLabel(this.authNameErrorMsgElement, 'Неверный логин или пароль');
-                break;
-            }
-            case 403: {
-                this.showErrorLabel( this.authNameErrorMsgElement, 'Данный пользователь является заблокированным');
-                break;
-            }
-            case 200: {
-                localStorage.setItem('bearer', result.access_token);
-                this.hideAccountExitForm();
-            }
+            switch (rawResult.status) {
+                case 401: {
+                    this.showErrorLabel(this.authNameErrorMsgElement, 'Неверный логин или пароль');
+                    break;
+                }
+                case 403: {
+                    this.showErrorLabel( this.authNameErrorMsgElement, 'Данный пользователь является заблокированным');
+                    break;
+                }
+                case 200: {
+                    localStorage.setItem('bearer', result.access_token);
+                    this.hideAccountExitForm();
+                    createMessage("Авторизация прошла успешно.", "Теперь вы можете создавать и просматривать собственные заказы.");
+                }
+            } 
+        } catch (error) {
+            createMessage("Не удалось создать заказ.", "Возможно, у вас проблемы с подключением к сети интернет.");
         }
-
-        this.addAllFormListeners();
-    }
-
-
-    addAllFormListeners() {
-        this.toAuthWindowBtn.addEventListener('click', this.swithFormToLogin);
-        this.toRegWindowBtn.addEventListener('click', this.swithFromToRegister);
-        this.accountWindowElement.addEventListener('click', this.exitOnBgClick);
-        this.registerBtnElement.addEventListener('click', this.register);
-        this.loginBtnElement.addEventListener('click', this.login);
-    }
-
-    removeAllFormListeners() {
-        this.toAuthWindowBtn.removeEventListener('click', this.swithFormToLogin);
-        this.toRegWindowBtn.removeEventListener('click', this.swithFromToRegister);
-        this.accountWindowElement.removeEventListener('click', this.exitOnBgClick);
-        this.registerBtnElement.removeEventListener('click', this.register);
-        this.loginBtnElement.removeEventListener('click', this.login);
+        
+        loadWindow.deleteWindow();
     }
 }
 

@@ -4,14 +4,12 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from src.errors import NoRecordError
-from src.database.database import session_fabric
 from src.admin_api.orders.views import *
 from src.admin_api.employees.dto_models import ( EmployeeAddDTO, EmployeeUpdateDTO, AuthenticateEmployeeRequestDTO,
                                            AuthenticateEmployeeResponseDTO)
 from src.admin_api.orders.dto_models import OrderStatusChangeModel
 from src.admin_api.employees.views import (get_all_employees, get_employee, create_employee, update_employee,
-                                           delete_employee, authenticate_employee)
+                                           get_all_positions, delete_employee, authenticate_employee)
 from src.admin_api.branches.views import create_branch, update_branch, get_all_branches
 from src.admin_api.branches.dto_models import BranchesDTO, BranchesAddDTO
 from src.admin_api.categories.views import create_category, get_all_categories, update_category
@@ -309,31 +307,6 @@ def change_order_status_route(change_order_data: OrderStatusChangeModel):
 
 
 @admin_route.get(
-    path="/users/{user_id}/orders",
-    tags=["Заказы🧾"],
-    name="Получить заказы пользователя",
-    summary="При помощи данного запроса должно производиться получение всех заказов конкретного пользователя "
-            "для административного приложения.",
-    response_class=JSONResponse
-)
-def get_user_orders_route(
-    user_id: int,
-    session: Session = Depends(get_db),
-):
-    try:
-        orders = get_user_orders(user_id, session)
-        return JSONResponse(
-            content={"orders": orders},
-            status_code=status.HTTP_200_OK
-        )
-    except NoRecordError as e:
-        return JSONResponse(
-            content={"message": "No record error", "description": e.args},
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
-        )
-
-
-@admin_route.get(
     path="/employees",
     tags=["Сотрудники👥"],
     name="Получить данные обо всех сотрудниках",
@@ -374,6 +347,23 @@ def get_employee_route(
             content={"message": "No record error", "description": e.args},
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT
         )
+
+
+@admin_route.get(
+    path="/positions",
+    tags=["Сотрудники👥"],
+    name="Получить данные обо всех должностях",
+    summary="При помощи данного запроса должно производиться получение данных обо всех должностях для формы сотрудников административного приложения.",
+    response_class=JSONResponse
+)
+def get_positions(
+    session: Session = Depends(get_db),
+):
+    positions = get_all_positions(session)
+    return JSONResponse(
+        content={"positions": positions},
+        status_code=status.HTTP_200_OK
+    )
 
 
 @admin_route.post(

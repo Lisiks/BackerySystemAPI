@@ -1,7 +1,7 @@
 {% extends 'base_template.html' %}
 
 {% block page_title %}
-    <title>FAQ</title>
+    <title>О компании 67 Vkusov</title>
 {% endblock %}
 
 {% block page_css %}
@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/account.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/about_company_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='CSS/add_product_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/message_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/loading_window_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='CSS/user_profile.css') }}">
 {% endblock %}
+
 
 {% block content %}
 
@@ -27,8 +31,6 @@
             <button type="button" id="last-slider-button" class="slider-btn">&lt</button>
             <button type="button" id="next-slider-button" class="slider-btn">&gt</button>
         </div>
-
-
         <p class="text">Мы не просто продаем хлеб — мы создаем атмосферу. Мы верим, что счастье кроется в деталях: в хрустящей корочке, в аромате свежего круассана и в улыбке, с которой мы встречаем вас каждое утро. Для нас «67 Vkusov» — это способ сделать каждый ваш день чуть вкуснее, уютнее и добрее.</p>
    </div>
 
@@ -40,6 +42,7 @@
     {% include '_account.html' %}
     {% include '_liked_products.html' %}
     {% include '_shopping_cart.html' %}
+    {% include '_user_profile.html' %}
 {% endblock %}
 
 {% block page_js %}

@@ -3,16 +3,24 @@ import { AddProductWindow } from "./add_product_module.js"
 import { ShoppingCart } from "./shopping_cart_module.js"
 import { UserAccountExitWindow } from "./user_account_module.js"
 import { LikedProductCirtain } from "./liked_products_module.js"
+import { EmailForm} from "./email_message_module.js"
+import { UserProfile } from "./user_profile_module.js"
+
 
 async function initPage() {
     const exitAcciuntWindow = new UserAccountExitWindow();
     const addingProductModalWindow = new AddProductWindow();
     const shoppingCartModalWindow = new ShoppingCart(exitAcciuntWindow);
     const likedProductsModalWindow = new LikedProductCirtain();
+    const emailForm = new EmailForm();
+    const userProfile = new UserProfile(exitAcciuntWindow);
 
     const openProductCartBtn = document.getElementById('shopping-cart-button');
     const openLikedProductsBtn = document.getElementById('liked-products-button');
     const likeProductBtnElement = document.getElementById('liked-button');
+    const sendSupportEmailBtn = document.getElementById('send-support-mail-btn');
+    const openProfileBtn = document.getElementById('in-account-button');
+
 
     const productId = window.location.href.split('/').pop();
     const likerProducts = JSON.parse(localStorage.getItem('likedProducts'));
@@ -49,6 +57,12 @@ async function initPage() {
     openLikedProductsBtn.addEventListener('click', () => {
         likedProductsModalWindow.openWindow();
     });
+
+    openProfileBtn.addEventListener('click', () => {
+        userProfile.openUserProfile();
+    });
+
+    sendSupportEmailBtn.addEventListener('click', emailForm.sendMessage);
 
     document.addEventListener('click', (event) => {   
         if (event.target.hasAttribute('data-js-in-cart-button')) {

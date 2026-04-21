@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddDTO, EmployeeUpdateDTO, PositionDTO,
                                                 AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO, 
                                                 )
-from src.database.orm_models import EmployeesORM, BranchesORM, PositionORM
+from src.database.orm_models import EmployeesORM, BranchesORM, PositionsORM
 from src.errors import NoRecordError
 
 

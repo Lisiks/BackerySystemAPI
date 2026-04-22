@@ -1,17 +1,15 @@
 from fastapi import HTTPException, status
 
-from passlib.context import CryptContext
+import bcrypt
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddAndUpdateDTO, PositionDTO,
-                                                AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO)
+from src.admin_api.employees.dto_models import (EmployeeDTO, EmployeeAddDTO, EmployeeUpdateDTO, PositionDTO,
+                                                AuthenticateEmployeeRequestDTO, AuthenticateEmployeeResponseDTO, 
+                                                )
 from src.database.orm_models import EmployeesORM, BranchesORM, PositionsORM
 from src.errors import NoRecordError
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_employee_password(password: str) -> str:
@@ -20,13 +18,16 @@ def hash_employee_password(password: str) -> str:
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Пароль не должен быть длиннее 72 байт",
         )
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_employee_password(plain_password: str, password_hash: str) -> bool:
     if len(plain_password.encode("utf-8")) > 72:
         return False
-    return pwd_context.verify(plain_password, password_hash)
+    return bcrypt.checkpw(
+        plain_password.encode('utf-8'),
+        password_hash.encode('utf-8') if isinstance(password_hash, str) else password_hash
+    )
 
 
 def authenticate_employee(
@@ -40,7 +41,7 @@ def authenticate_employee(
     if not employee:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный логин или пароль",
+            detail="Неверный логин или пароль!!!!!!!!",
         )
 
     if not verify_employee_password(data.password, employee.password_hash):
@@ -115,7 +116,7 @@ def get_employee(employee_id: int, session: Session):
         work_address=str(branch.branches_address),
     ).model_dump(mode="json")
 
-def create_employee(new_employee: EmployeeAddAndUpdateDTO, session: Session):
+def create_employee(new_employee: EmployeeAddDTO, session: Session):
     branch = session.get(BranchesORM, new_employee.branch_id)
     if branch is None:
         raise NoRecordError(f"No branch with id={new_employee.branch_id}")
@@ -137,7 +138,7 @@ def create_employee(new_employee: EmployeeAddAndUpdateDTO, session: Session):
     session.commit()
 
 
-def update_employee(employee_id: int, current_employee: EmployeeAddAndUpdateDTO, session: Session):
+def update_employee(employee_id: int, current_employee: EmployeeUpdateDTO, session: Session):
     employee = session.get(EmployeesORM, employee_id)
     if employee is None:
         raise NoRecordError(f"No employee with id={employee_id}")

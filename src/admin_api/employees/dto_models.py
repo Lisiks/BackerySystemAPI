@@ -13,7 +13,7 @@ class EmployeeUpdateDTO(BaseModel):
     #id: int = Field(gt=0)
     full_name: str = Field(min_length=1, max_length=255)
     phone: str = Field(min_length=1, max_length=30)
-    position: str = Field(min_length=1, max_length=100)
+    position_id: int = Field(gt=0)
     username: str = Field(min_length=3, max_length=100)
     branch_id: int = Field(gt=0)
 

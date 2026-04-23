@@ -46,6 +46,7 @@
 
 .product-card > p {
     width: calc(160px + 7vw);
+    flex-grow: 1;
 }
 
 .product-price-span {

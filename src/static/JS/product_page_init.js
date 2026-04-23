@@ -70,11 +70,10 @@ async function initPage() {
             addingProductModalWindow.openWindow(currentProductId);
         }
         else if (event.target.hasAttribute('data-js-liked-button')) {
-            const productId = event.target.getAttribute('productId');
-            likedProductsModalWindow.setLikedPosition(event.target, productId);
+            const currentProductId = event.target.getAttribute('productId');
+            likedProductsModalWindow.setLikedPosition(event.target, currentProductId);
          
-            if (event.target !== likeProductBtnElement) {
-                console.log(1);
+            if (event.target !== likeProductBtnElement && currentProductId === productId) {
                 likeProductBtnElement.style.backgroundImage = event.target.style.backgroundImage;
             }
         }

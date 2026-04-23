@@ -58,7 +58,7 @@ async function pageInit() {
             const productInfoTextElement = document.createElement('p');
 
             const productInfoTextPriceElement = document.createElement('span');
-            productInfoTextPriceElement.textContent = `${productInfoObj.sale_price} р `;
+            productInfoTextPriceElement.textContent = `${Number(productInfoObj.sale_price).toFixed(2)} р `;
             productInfoTextPriceElement.classList.add('product-price-span');
             productInfoTextElement.append(productInfoTextPriceElement);
 

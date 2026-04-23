@@ -14,9 +14,8 @@ class Settings(BaseSettings):
     DIRECTORY_NAME: str = "src"
     PRODUCT_IMAGE_DIR: str = "src/static/products"
 
-    CORS_ORIGINS: list = ["*"]
     CORS_ALLOW_CREDENTIALS: bool = False
-    CORS_ALLOW_METHODS: list = ["GET", "POST", "PUT"]
+    CORS_ALLOW_METHODS: list = ["GET", "POST", "PUT", "DELETE"]
     CORS_ALLOW_HEADERS: list = ["*"]
 
     JWT_SECRET_KEY: str
@@ -42,5 +41,9 @@ class Settings(BaseSettings):
     @property
     def full_domain(self):
         return f"http://{self.SERVER_HOST}:{self.SERVER_PORT}/"
+
+    @property
+    def CORS_ORIGINS(self):
+        return [f"{self.SERVER_HOST}:{self.SERVER_PORT}"]
 
 settings = Settings()
